@@ -12,7 +12,7 @@ const App = (app: Application) => {
     app.use(`${API_ROOT}`, authRoutes)
     app.use(`${API_ROOT}/user`, userManagementRoutes)
     app.use(`${API_ROOT}/chats`, chatRoutes)
-    app.use(`${API_ROOT}/message`, messageRoutes)
+    app.use(`${API_ROOT}/messages`, messageRoutes)
 }
 
 export default App

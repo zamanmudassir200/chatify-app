@@ -1,9 +1,10 @@
-import app from '../app'
+// import app from '../app'
 import { bootstrap } from '../bootstrap'
 import config from '../config/config'
 import logger from '../handlers/logger'
+import { server } from '../sockets/socket'
 
-const server = app.listen(config.PORT)
+const mainServer = server.listen(config.PORT)
 void (async () => {
     try {
         await bootstrap().then(() => {
@@ -13,7 +14,7 @@ void (async () => {
         })
     } catch (error) {
         logger.error(`Error starting server:`, { meta: error })
-        server.close((err) => {
+        mainServer.close((err) => {
             if (err) logger.error(`error`, { meta: error })
 
             process.exit(1)

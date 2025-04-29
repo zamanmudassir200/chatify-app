@@ -26,20 +26,49 @@ export default {
 
             const user = req.authenticatedUser
             const { userId } = req.params
+
+            const existingUser = await userModel.findById(userId)
+
+            if (!existingUser) {
+                return httpError(next, new Error('User not found'), req, 404)
+            }
             if (!user) {
                 return httpError(next, new Error('Unauthorized access'), req, 401)
             }
-            console.log(user, userId)
+            const createChat = await chatModel.create({
+                chatName: existingUser.name,
+                users: existingUser._id,
+                groupAdmin: user._id
+            })
 
             const updatedUser = await userModel.findByIdAndUpdate(
                 user._id,
                 {
-                    $addToSet: { chats: userId }
+                    $addToSet: { chats: createChat._id }
                 },
                 { new: true }
             )
-            console.log(updatedUser)
-            response.status(200).json({ message: 'user added to chat' })
+            response.status(200).json({ message: 'user added to chat', updatedUser })
+        } catch (error) {
+            httpError(next, error, request, 500)
+        }
+    }),
+    getAllChatsByUser: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const req = request as IAuthenticateRequest2
+
+            const user = req.authenticatedUser
+
+            const loginUser = await userModel.findById(user._id).populate({
+                path: 'chats',
+                populate: {
+                    path: 'users',
+                    model: 'user', // make sure this matches your model name
+                    select: '-password' // optional: exclude password
+                }
+            })
+            console.log('Login user with chats', loginUser)
+            response.status(200).json({ message: 'login user with chats', loginUser })
         } catch (error) {
             httpError(next, error, request, 500)
         }

@@ -16,13 +16,10 @@ export default asyncHandler(async (request: Request, _response: Response, next: 
         const { accessToken } = cookies as {
             accessToken: string | undefined
         }
-        console.log('access token', accessToken)
 
         if (accessToken) {
             const { userId } = jwt.verifyToken(accessToken, config.TOKENS.ACCESS.SECRET) as IDecryptedJwt
-            console.log('decoded JWT: user id', userId) // ✅ debug decoded content
             const user = await query.findUserById(userId)
-            console.log('user fetched from DB:', user)
 
             if (user) {
                 req.authenticatedUser = user

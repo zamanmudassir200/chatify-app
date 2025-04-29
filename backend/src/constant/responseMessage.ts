@@ -15,3 +15,4 @@ export default {
         LOGIN_SUCCESSFUL: `Login successful`
     }
 }
+
