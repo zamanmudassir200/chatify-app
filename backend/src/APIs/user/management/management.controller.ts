@@ -6,7 +6,11 @@ import { CustomError } from '../../../utils/errors'
 import { IMyUser } from './types/management.interface'
 import userModel from '../_shared/models/user.model'
 import asyncHandler from '../../../handlers/async'
+import { IUserWithId } from '../_shared/types/users.interface'
 
+interface IAuthenticateRequest2 extends Request {
+    authenticatedUser: IUserWithId
+}
 export default {
     me: (request: Request, response: Response, next: NextFunction) => {
         try {
@@ -30,15 +34,16 @@ export default {
     }),
     searchUser: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
-            const { name, email } = request.query
+            const req = request as IAuthenticateRequest2
+            const user = req.authenticatedUser
 
-            // Build dynamic query object
-            const query: any = {}
+            const keyword = req.query.search
+                ? {
+                      $or: [{ name: { $regex: req.query.search, $options: 'i' } }, { email: { $regex: req.query.search, $options: 'i' } }]
+                  }
+                : {}
 
-            if (name) query.name = { $regex: name, $options: 'i' }
-            if (email) query.email = { $regex: email, $options: 'i' }
-
-            const users = await userModel.find(query)
+            const users = await userModel.find(keyword).find({ _id: { $ne: user._id } })
 
             response.status(200).json({
                 success: true,

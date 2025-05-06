@@ -37,7 +37,7 @@ const Navbar = () => {
 
   return (
     <header className="h-20 w-full bg-blue-600 text-white flex items-center">
-      <nav className="container flex items-center justify-between mx-auto">
+      <nav className="container px-10 sm:px-20 flex items-center justify-between mx-auto">
         <div>
           <Link href="/" className="text-lg font-bold select-none">Chatify</Link>
         </div>

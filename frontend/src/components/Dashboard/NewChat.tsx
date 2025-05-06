@@ -13,7 +13,7 @@ interface NewChatProps {
 }
 
 const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
-  const { searchedData } = useChatStore();
+  const { searchedData,chats,setChats } = useChatStore();
   const { searchUsers, addUserIntoChats } = useHandleApiCall(); // Access mutation result
   const [addingUserId, setAddingUserId] = useState<AddIntoChat | null>(null);
   const [addedUserIds, setAddedUserIds] = useState<AddIntoChat[]>([]);
@@ -43,14 +43,17 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
       searchUsers.mutate(searchData);
     }
   };
-  console.log("addUserIntoChats", addUserIntoChats);
   const handleAddIntoChat = (userId: AddIntoChat) => {
     setAddingUserId(userId); // Show "Adding..." for this button
 
     addUserIntoChats.mutate(userId, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         setAddedUserIds((prev) => [...prev, userId]); // Add to added list
         setAddingUserId(null); // Reset loading state
+        setTimeout(()=>{
+          setIsNewChatModalOpen(false)
+            },1000)
+            setChats([...chats,data.chat])
       },
       onError: () => {
         setAddingUserId(null); // Reset loading state even if error occurs
@@ -59,7 +62,7 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
   };
 
   return (
-    <div className="absolute  inset-0 flex backdrop-brightness-50 items-center justify-center min-h-screen ">
+    <div className="fixed  inset-0 flex backdrop-brightness-50 items-center justify-center min-h-screen ">
       <div className="bg-white p-4  mx-2 max-w-lg w-full text-black rounded-lg ">
         <div className="flex my-3 items-center justify-between">
           <h1 className=" text-lg font-semibold">New Chat</h1>
@@ -101,8 +104,8 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
                 return (
                   <li
                     key={user._id}
-                    // onClick={}
-                    className="border-[1px] flex justify-between gap-2 border-gray-300  p-5 hover:bg-gray-100 cursor-pointer transition-all duration-150  "
+                    onClick={()=>handleAddIntoChat(user._id)}
+                    className=" border-[1px] flex justify-between gap-2 border-gray-300  p-5 hover:bg-gray-200 cursor-pointer transition-all duration-150  "
                   >
                     <div className="flex gap-3">
                       <div className="">
@@ -117,7 +120,7 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
                         <h1 className="font-semibold">{user.name}</h1>
                       </div>
                     </div>
-                    <div className="">
+                    {/* <div className="">
                       <Button
                         onClick={() => handleAddIntoChat(user._id)}
                         className="bg-green-500 select-none text-white cursor-pointer"
@@ -132,7 +135,7 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
                           ? "Adding..."
                           : "Add"}
                       </Button>
-                    </div>
+                    </div> */}
                   </li>
                 );
               })}

@@ -6,9 +6,15 @@ import { useRouter } from "next/navigation";
 import {
   addIntoChat,
   authenticateUser,
+  deleteChat,
+  fetchMessages,
+  getAllChatsByUser,
   loginUser,
+  logoutUser,
   registerUser,
+  searchChats,
   searchUser,
+  sendMessage,
 } from "@/services/chatServices";
 import {
   RegisterForm,
@@ -16,10 +22,14 @@ import {
   LoginForm,
   SearchUser,
   AddIntoChat,
+  Message,
+  Chat,
 } from "@/components/types/types"; // Ensure types are correct
 
 export const useHandleApiCall = () => {
   const { setUser, setSearchedData, searchedData } = useChatStore();
+
+  const { chats, setChats } = useChatStore.getState();
   const router = useRouter();
 
   const register = useMutation<AuthState, Error, RegisterForm>({
@@ -52,6 +62,19 @@ export const useHandleApiCall = () => {
       }
     },
   });
+  const logout = useMutation<AuthState, Error, any>({
+    mutationFn: logoutUser,
+    onSuccess: (data) => {
+      console.log("user logout");
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+    },
+  });
 
   const searchUsers = useMutation<any, Error, SearchUser>({
     mutationFn: searchUser,
@@ -78,6 +101,7 @@ export const useHandleApiCall = () => {
     mutationFn: addIntoChat,
     onSuccess: (data) => {
       console.log(data);
+      toast.success(data.message);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -87,5 +111,61 @@ export const useHandleApiCall = () => {
       }
     },
   });
-  return { register, login, searchUsers, authenticate, addUserIntoChats };
+  const handleSendMessage = useMutation<AuthState, Error, Message>({
+    mutationFn: sendMessage,
+    onSuccess: (data) => {
+      console.log("data");
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+  const handleGetAllChatsByUser = useQuery({
+    queryKey: ["chats"],
+    queryFn: getAllChatsByUser,
+    retry: false,
+  });
+
+  // const handleFetchMessages = useQuery({
+  //   queryKey: ["messages"],
+  //   queryFn: fetchMessages,
+  //   retry: false,
+  // });
+  const handleDeleteChat = useMutation<AuthState, Error, any>({
+    mutationFn: deleteChat,
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+
+  const handleSearchedChats = (searchedValue: string) =>
+    useQuery<Chat[]>({
+      queryKey: ["searchChats", searchedValue],
+      queryFn: () => searchChats(searchedValue),
+      enabled: !!searchedValue,
+    });
+  return {
+    // handleFetchMessages,
+    handleSearchedChats,
+    handleDeleteChat,
+    handleSendMessage,
+    handleGetAllChatsByUser,
+    register,
+    login,
+    searchUsers,
+    authenticate,
+    addUserIntoChats,
+    logout,
+  };
 };
