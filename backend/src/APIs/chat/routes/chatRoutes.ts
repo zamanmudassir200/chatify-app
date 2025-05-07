@@ -4,14 +4,37 @@ import chatController from '../controllers/chatController'
 
 const router = Router()
 
-// router.route('/').get(authenticate, chatController.getAllChats)
-router.route('/accessChat/:userId').post(authenticate, chatController.accessChat)
-router.route('/fetchChats').get(authenticate, chatController.fetchChats)
+// Access a chat with a user
+router.post('/accessChat/:userId', authenticate, chatController.accessChat)
 
-router.route('/:chatId').delete(authenticate, chatController.deleteChat)
+// Fetch all chats for authenticated user
+router.get('/fetchChats', authenticate, chatController.fetchChats)
 
-router.route('/addUserIntoChat/:userId').post(authenticate, chatController.addUserIntoChat)
-router.route('/getAllChatsByUser').get(authenticate, chatController.getAllChatsByUser)
+// Delete a chat
+router.delete('/:chatId', authenticate, chatController.deleteChat)
 
-router.route('/searchChats').get(authenticate, chatController.searchChats)
+// Rename a chat
+router.put('/:chatId', authenticate, chatController.renameChat)
+
+// Add a user to a chat
+router.post('/addUserIntoChat/:userId', authenticate, chatController.addUserIntoChat)
+
+// Get all chats by a user
+router.get('/getAllChatsByUser', authenticate, chatController.getAllChatsByUser)
+
+// Create a group chat
+router.post('/createGroup', authenticate, chatController.createGroup)
+
+// Rename a group chat
+router.put('/renameGroup/:chatId', authenticate, chatController.renameGroup)
+
+// Add user to a group chat
+router.put('/addToGroup/:chatId', authenticate, chatController.addToGroup)
+
+// Remove user from a group chat
+router.put('/removeFromGroup/:chatId', authenticate, chatController.removeFromGroup)
+
+// Search chats
+router.get('/searchChats', authenticate, chatController.searchChats)
+
 export default router

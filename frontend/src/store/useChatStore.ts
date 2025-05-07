@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { Chat } from "@/components/types/types";
+import axios from "axios";
+import url from "@/url/url";
 // You can define proper types instead of `any` if available
 interface ChatState {
   user: any; // ideally you should define a User type
@@ -8,11 +10,13 @@ interface ChatState {
   searchedData: any; // define SearchUser[] or similar
   setSearchedData: (data: any) => void;
 
-  selectedItem: any | null; // instead of just []
-  setSelectedItem: (data: any[]) => void;
+  selectedItem: null | Chat; // instead of just []
+  setSelectedItem: (data: Chat) => void;
 
   chats: Chat[];
   setChats: (data: Chat[]) => void;
+
+  fetchChats: () => void;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -27,4 +31,10 @@ export const useChatStore = create<ChatState>((set) => ({
 
   chats: [],
   setChats: (data) => set({ chats: data }),
+  fetchChats: async () => {
+    const response = await axios.get(`${url}/chats/fetchChats`, {
+      withCredentials: true,
+    });
+    set({ chats: response.data });
+  },
 }));

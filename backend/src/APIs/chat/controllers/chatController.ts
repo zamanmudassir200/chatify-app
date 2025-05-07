@@ -95,7 +95,6 @@ export default {
     deleteChat: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
             const { chatId } = request.params
-            console.log('chatId', chatId)
             if (!chatId) {
                 response.status(404).json({ message: 'Invalid chatId', success: false })
                 return
@@ -114,22 +113,39 @@ export default {
             return
         }
     }),
-    // searchChats: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
-    //     try {
-    //         const req = request as IAuthenticateRequest2
-    //         const user = req.authenticatedUser
-    //         const keyword = req.query.search
-    //         if (!keyword) {
-    //             response.status(404).json({ message: 'Please enter chatName', success: false })
-    //         }
-    //         const searchChats = await chatModel.find({ chatName: { $regex: keyword, $options: 'i' } })
-
-    //         response.status(200).json({ message: 'Search chats found', count: searchChats.length, searchChats, success: true })
-    //     } catch (error) {
-    //         httpError(next, error, req, 500)
-    //         return
-    //     }
-    // }),
+    renameChat: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const { chatId } = request.params
+            const { chatName } = request.body
+            if (!chatId) {
+                response.status(404).json({ message: 'Invalid chatId', success: false })
+                return
+            }
+            if (!chatName) {
+                response.status(400).json({ message: 'Chatname is required', success: false })
+                return
+            }
+            const chat = await chatModel.findById(chatId)
+            if (!chat) {
+                response.status(400).json({ message: 'Chat not found', success: false })
+                return
+            }
+            const renameChat = await chatModel.findByIdAndUpdate(
+                { _id: chat._id },
+                {
+                    chatName: chatName
+                },
+                {
+                    new: true
+                }
+            )
+            response.status(201).json({ message: 'Chat has been renamed', success: true, renameChat })
+            return
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
 
     searchChats: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
@@ -159,7 +175,149 @@ export default {
             return
         }
     }),
+    createGroup: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const req = request as IAuthenticateRequest2
+            const user = req.authenticatedUser
 
+            let { chatName, users } = req.body
+            if (!chatName || !users) {
+                response.status(404).json({ message: 'All fields are required', success: false })
+                return
+            }
+            users = JSON.parse(users)
+            if (users.length < 2) {
+                response.status(400).json({ message: 'More than 2 users are required to form a group', success: false })
+                return
+            }
+            users.push(user._id)
+            const createGroupChat = await chatModel.create({
+                chatName: chatName,
+                users: users,
+                isGroupChat: true,
+                groupAdmin: user
+            })
+
+            const createdGroupChat = await chatModel
+                .findOne({ _id: createGroupChat._id })
+                .populate('users', '-password')
+                .populate('groupAdmin', '-password')
+
+            response.status(201).json({ message: 'Group chat created', createdGroupChat, success: true })
+            return
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
+    renameGroup: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const req = request as IAuthenticateRequest2
+            const user = req.authenticatedUser
+
+            const { chatId } = req.params
+            const { chatName } = req.body
+            if (!chatId || !chatName) {
+                response.status(400).json({ message: 'All fields are required', success: false })
+                return
+            }
+            const existingGroupChat = await chatModel.findById(chatId)
+            if (!existingGroupChat) {
+                response.status(400).json({ message: 'Group chat not found', success: false })
+                return
+            }
+            const renameGroup = await chatModel
+                .findByIdAndUpdate(
+                    { _id: existingGroupChat._id },
+                    {
+                        chatName: chatName
+                    },
+                    {
+                        new: true
+                    }
+                )
+                .populate('users', '-password')
+                .populate('groupAdmin', '-password')
+
+            response.status(201).json({ message: `Group name has been changed by ${user?.name}`, renameGroup, renamedBy: user, success: true })
+            return
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
+    addToGroup: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const req = request as IAuthenticateRequest2
+            // const user = req.authenticatedUser
+            const { userId } = req.body
+            const { chatId } = req.params
+            if (!chatId) {
+                response.status(400).json({ message: 'ChatID is required (params)', success: false })
+                return
+            }
+            if (!userId) {
+                response.status(400).json({ message: 'All fields are required', success: false })
+                return
+            }
+            const added = await chatModel
+                .findByIdAndUpdate(
+                    chatId,
+                    {
+                        $addToSet: { users: userId }
+                    },
+                    { new: true }
+                )
+                .populate('users', '-password')
+                .populate('groupAdmin', '-password')
+            if (!added) {
+                response.status(404).json({ message: 'Chat not found', success: false })
+                return
+            } else {
+                response.status(201).json({ message: 'User added to the group', added, success: true })
+                return
+            }
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
+    removeFromGroup: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const req = request as IAuthenticateRequest2
+            // const user = req.authenticatedUser
+            const { userId } = req.body
+            const { chatId } = req.params
+            if (!chatId) {
+                response.status(400).json({ message: 'ChatID is required (params)', success: false })
+                return
+            }
+            if (!userId) {
+                response.status(400).json({ message: 'User id is required', success: false })
+                return
+            }
+            const removed = await chatModel
+                .findByIdAndUpdate(
+                    chatId,
+                    {
+                        $pull: { users: userId }
+                    },
+                    { new: true }
+                )
+                .populate('users', '-password')
+                .populate('groupAdmin', '-password')
+            if (!removed) {
+                response.status(404).json({ message: 'Chat not found', success: false })
+                return
+            } else {
+                response.status(201).json({ message: 'User removed from the group', removed, success: true })
+                return
+            }
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
     addUserIntoChat: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
             const req = request as IAuthenticateRequest2

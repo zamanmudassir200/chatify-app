@@ -7,6 +7,8 @@ import {
   AuthState,
   AddIntoChat,
   Message,
+  RenameChat,
+  GroupChat,
 } from "@/components/types/types";
 
 export const registerUser = async (formData: RegisterForm) => {
@@ -103,5 +105,29 @@ export const searchChats = async (searchedValue: string) => {
     }
   );
 
+  return response.data;
+};
+
+export const renameChat = async (data: RenameChat) => {
+  const response = await axios.put(
+    `${url}/chats/${data.chatId}`,
+    { chatName: data.chatName },
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+export const createGroup = async (data: GroupChat) => {
+  const response = await axios.post(
+    `${url}/chats/createGroup`,
+    {
+      chatName: data.chatName,
+      users: data.users,
+    },
+    { withCredentials: true }
+  );
   return response.data;
 };

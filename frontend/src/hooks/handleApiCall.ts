@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import {
   addIntoChat,
   authenticateUser,
+  createGroup,
   deleteChat,
   fetchMessages,
   getAllChatsByUser,
   loginUser,
   logoutUser,
   registerUser,
+  renameChat,
   searchChats,
   searchUser,
   sendMessage,
@@ -24,12 +26,14 @@ import {
   AddIntoChat,
   Message,
   Chat,
+  RenameChat,
+  GroupChat,
 } from "@/components/types/types"; // Ensure types are correct
 
 export const useHandleApiCall = () => {
   const { setUser, setSearchedData, searchedData } = useChatStore();
+  const fetchChats = useChatStore((state) => state.fetchChats);
 
-  const { chats, setChats } = useChatStore.getState();
   const router = useRouter();
 
   const register = useMutation<AuthState, Error, RegisterForm>({
@@ -111,7 +115,7 @@ export const useHandleApiCall = () => {
       }
     },
   });
-  const handleSendMessage = useMutation<AuthState, Error, Message>({
+  const handleSendMessage = useMutation<any, Error, Message>({
     mutationFn: sendMessage,
     onSuccess: (data) => {
       console.log("data");
@@ -155,8 +159,48 @@ export const useHandleApiCall = () => {
       queryFn: () => searchChats(searchedValue),
       enabled: !!searchedValue,
     });
+
+  const handleRenameChat = useMutation<any, Error, RenameChat>({
+    mutationFn: renameChat,
+    onSuccess: (data, variables) => {
+      const { chatId, chatName } = variables;
+      // chats ko update karo
+      const { chats, setChats } = useChatStore.getState();
+
+      const updatedChats = chats.map((chat) =>
+        chat._id === chatId ? { ...chat, name: chatName } : chat
+      );
+      setChats(updatedChats);
+      toast.success(data.message);
+      // setRenameChatModal(false); // modal band karo
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  });
+
+  const handleCreateGroupChat = useMutation<any, Error, GroupChat>({
+    mutationFn: createGroup,
+    onSuccess: (data) => {
+      console.log("create group", data);
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  });
   return {
     // handleFetchMessages,
+    handleCreateGroupChat,
+    handleRenameChat,
     handleSearchedChats,
     handleDeleteChat,
     handleSendMessage,

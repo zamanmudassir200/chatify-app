@@ -48,3 +48,12 @@ export interface Chat {
   latestMessage: string;
   groupAdmin: string;
 }
+export interface GroupChat {
+  chatName: string;
+  users: string;
+}
+
+export interface RenameChat {
+  chatId: string;
+  chatName: string;
+}

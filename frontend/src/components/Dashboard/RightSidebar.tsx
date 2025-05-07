@@ -206,9 +206,7 @@ const RightSidebar = () => {
         // if (chatRoomId) {
         //   socket.emit("sendMessage", { ...data?.msg, chat: chatRoomId });
         // }
-        const receiverId = selectedItem?.users?.find(
-          (user: any) => user._id !== authenticate?.data?.data?._id
-        )?._id;
+      
       },
       onError: (error) => {
         console.error("❌ Message send error", error);
