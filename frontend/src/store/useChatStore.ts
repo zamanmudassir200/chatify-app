@@ -13,9 +13,11 @@ interface ChatState {
   selectedItem: null | Chat; // instead of just []
   setSelectedItem: (data: Chat) => void;
 
-  chats: Chat[];
-  setChats: (data: Chat[]) => void;
+  chats: any;
+  setChats: (data: any) => void;
 
+  chatName: string;
+  setChatName: (data: string) => void;
   fetchChats: () => void;
 }
 
@@ -31,6 +33,9 @@ export const useChatStore = create<ChatState>((set) => ({
 
   chats: [],
   setChats: (data) => set({ chats: data }),
+
+  chatName: "",
+  setChatName: (data) => set({ chatName: data }),
   fetchChats: async () => {
     const response = await axios.get(`${url}/chats/fetchChats`, {
       withCredentials: true,

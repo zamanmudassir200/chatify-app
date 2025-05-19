@@ -31,7 +31,8 @@ const LeftSidebar = () => {
     handleDeleteChat,
     handleCreateGroupChat,
   } = useHandleApiCall(); // Access mutation result
-  const { setSelectedItem, selectedItem, setChats, chats } = useChatStore();
+  const { setSelectedItem, selectedItem, chatName, setChats, chats } =
+    useChatStore();
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [isGroupChatModalOpen, setIsGroupChatModalOpen] = useState(false);
@@ -48,22 +49,23 @@ const LeftSidebar = () => {
 
   useEffect(() => {
     if (handleGetAllChatsByUser.isSuccess) {
-      setChats(handleGetAllChatsByUser?.data?.chats);
+      setChats(handleGetAllChatsByUser?.data);
     }
   }, [handleGetAllChatsByUser.isSuccess]);
+
+  console.log("chats", chats);
+
   const [optionModalChatId, setOptionModalChatId] = useState<string | null>(
     null
   );
   const deleteChatHandler = (chatId: string) => {
     handleDeleteChat.mutate(chatId);
-    const updatedChats = chats.filter((chat) => chat?._id !== chatId);
+    const updatedChats = chats.filter((chat: any) => chat?._id !== chatId);
     setChats(updatedChats);
   };
   const [selectedChatId, setSelectedChatId] = useState<string>("");
 
   const [renameChatModal, setRenameChatModal] = useState(false);
-
-  const [chatName, setChatName] = useState("");
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [submittedTerm, setSubmittedTerm] = useState<string>("");
@@ -92,7 +94,7 @@ const LeftSidebar = () => {
     handleRenameChat.mutate({ chatId, chatName });
   };
 
-  const handleCreateGroup = (chatName: string, users: string) => {
+  const handleCreateGroup = (chatName: string, users: string[]) => {
     handleCreateGroupChat.mutate({ chatName, users });
   };
 
@@ -132,8 +134,8 @@ const LeftSidebar = () => {
               </Button>
               <Button
                 onClick={() => {
-                  setIsGroupChatModalOpen(true)
-                  setIsOptionsModalOpen(false)
+                  setIsGroupChatModalOpen(true);
+                  setIsOptionsModalOpen(false);
                 }}
               >
                 Create group chat
@@ -173,7 +175,7 @@ const LeftSidebar = () => {
             </form>
           </div>
           {searchTerm && searchTerm.length > 0 && searchedDataModal && (
-            <div className="absolute w-full h-[300px] z-50  bg-white  text-black  rounded-b-lg">
+            <div className="absolute w-full h-[300px] z-50 overflow-y-auto  bg-white  text-black  rounded-b-lg">
               {searchData?.length === 0 && submittedTerm && (
                 <p className="p-2 text-center text-gray-700">No chats found.</p>
               )}
@@ -187,7 +189,7 @@ const LeftSidebar = () => {
                     >
                       <div className="gap-2 flex items-center cursor-pointer">
                         <Image
-                          src={chat?.users?.profilePic || "/globe.svg"}
+                          src={"/globe.svg"}
                           width={50}
                           height={50}
                           alt="avatar"
@@ -203,75 +205,76 @@ const LeftSidebar = () => {
           )}
         </div>
         <hr className="my-3" />
+        <div className="h-[calc(100vh-190px)] overflow-y-auto">
+          {chats && chats.length > 0 ? (
+            [...chats].reverse().map((chat: any) => {
+              const isSelected = selectedItem === chat;
+              const isOptionOpen = optionModalChatId === chat._id;
 
-        {chats && chats?.length > 0 ? (
-          chats.reverse().map((chat: any) => {
-            const isSelected = selectedItem === chat;
-            const isOptionOpen = optionModalChatId === chat._id;
-
-            return (
-              <div
-                key={chat._id}
-                className={`relative ${
-                  isSelected ? "bg-blue-800" : ""
-                } flex items-center justify-between gap-2 my-3 hover:bg-blue-700 rounded-xl p-2`}
-              >
+              return (
                 <div
-                  onClick={() => setSelectedItem(chat)}
-                  className="gap-2 w-full flex items-center cursor-pointer"
+                  key={chat._id}
+                  className={`relative ${
+                    isSelected ? "bg-blue-800" : ""
+                  } flex items-center justify-between gap-2 my-3 hover:bg-blue-700 rounded-xl p-2`}
                 >
-                  <Image
-                    src={chat.users.profilePic || "/globe.svg"}
-                    width={50}
-                    height={50}
-                    alt="avatar"
-                    loading="lazy"
-                  />
-                  <h1 className="text-sm">{chat.chatName}</h1>
+                  <div
+                    onClick={() => setSelectedItem(chat)}
+                    className="gap-2 w-full flex items-center cursor-pointer"
+                  >
+                    <Image
+                      src={"/globe.svg"}
+                      width={50}
+                      height={50}
+                      alt="avatar"
+                      loading="lazy"
+                    />
+                    <h1 className="text-sm">{chat.chatName}</h1>
+                  </div>
+
+                  <div className="">
+                    <HiDotsVertical
+                      className="cursor-pointer"
+                      size={20}
+                      onClick={() =>
+                        setOptionModalChatId((prev) =>
+                          prev === chat._id ? null : chat._id
+                        )
+                      }
+                    />
+
+                    {isOptionOpen && (
+                      <div className="flex flex-col gap-2 absolute z-50 -bottom-20 right-0 bg-white shadow-md rounded-md p-2">
+                        <Button
+                          className="cursor-pointer"
+                          onClick={() => deleteChatHandler(chat._id)}
+                          variant={"destructive"}
+                        >
+                          Delete
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSelectedChatId(chat._id);
+                            setRenameChatModal(true);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          Rename
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              );
+            })
+          ) : (
+            <h1 className="text-md font-semibold my-2 text-center">
+              Click 'New Chat' to add new chats
+            </h1>
+          )}
+        </div>
 
-                <div className="relative">
-                  <HiDotsVertical
-                    className="cursor-pointer"
-                    size={20}
-                    onClick={() =>
-                      setOptionModalChatId((prev) =>
-                        prev === chat._id ? null : chat._id
-                      )
-                    }
-                  />
-
-                  {isOptionOpen && (
-                    <div className="flex flex-col gap-2 absolute z-50 top-6 right-0 bg-white shadow-md rounded-md p-2">
-                      <Button
-                        className="cursor-pointer"
-                        onClick={() => deleteChatHandler(chat._id)}
-                        variant={"destructive"}
-                      >
-                        Delete
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setSelectedChatId(chat._id);
-                          setRenameChatModal(true);
-                        }}
-                        className="cursor-pointer"
-                      >
-                        Rename
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <h1 className="text-md font-semibold my-2 text-center">
-            Click 'New Chat' to add new chats
-          </h1>
-        )}
-
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute w-full bg-blue-500 bottom-0 right-3 p-2 flex justify-end">
           <Button
             onClick={() => setLogoutModalOpen(true)}
             variant="destructive"

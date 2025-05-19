@@ -151,22 +151,24 @@
 
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { FaUser } from "react-icons/fa";
 
 import { IoIosSend } from "react-icons/io";
 import { useHandleApiCall } from "@/hooks/handleApiCall";
 import { useChatStore } from "@/store/useChatStore";
-import { Message } from "../types/types";
-import { fetchMessages } from "@/services/chatServices";
+import { Chat, Message } from "../types/types";
 import { generateChatRoomId } from "@/utils/chatRoom"; // Add this import at top
 import { IoClose } from "react-icons/io5";
 
 import { Button } from "../ui/button";
 
+const ProfileModal  = lazy(()=>import('./ProfileModal'))
+
 const RightSidebar = () => {
-  const { authenticate, handleSendMessage } = useHandleApiCall();
+  const { authenticate, handleSendMessage, handleFetchMessages } =
+    useHandleApiCall();
   const [messages, setMessages] = useState<Message[]>([]);
   const { selectedItem, setSelectedItem } = useChatStore();
   const [message, setMessage] = useState("");
@@ -191,10 +193,10 @@ const RightSidebar = () => {
     }
 
     const messageData: Message = {
-      sender: authenticate?.data?.data?._id,
       content: message,
       chat: selectedItem._id,
     };
+    setMessage("");
 
     // Send to server via REST API
     handleSendMessage.mutate(messageData, {
@@ -206,34 +208,26 @@ const RightSidebar = () => {
         // if (chatRoomId) {
         //   socket.emit("sendMessage", { ...data?.msg, chat: chatRoomId });
         // }
-      
       },
       onError: (error) => {
         console.error("❌ Message send error", error);
       },
     });
-
-    setMessage("");
   };
+  const selectedChatId = selectedItem?._id || null;
+
+  const { data, isPending, isSuccess } = handleFetchMessages(
+    selectedChatId ?? ""
+  );
+  useEffect(() => {
+    if (isSuccess) {
+      setMessages(data);
+    }
+  }, [isSuccess, data]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    const loadMessages = async () => {
-      if (selectedItem?._id) {
-        try {
-          const msgs = await fetchMessages(selectedItem._id);
-          setMessages(msgs);
-        } catch (error) {
-          console.error("Failed to load messages", error);
-        }
-      }
-    };
-
-    loadMessages();
-  }, [selectedItem]);
 
   const currentUserId = authenticate?.data?.data?._id;
   const targetUserId = selectedItem?.users?.find(
@@ -260,6 +254,15 @@ const RightSidebar = () => {
     setSelectedItem(null); // this triggers your placeholder UI
     setShowContextMenu(false);
   };
+  const typingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+
+  useEffect(() => {
+    console.log("data", data);
+  }, []);
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   return (
     <>
@@ -296,33 +299,57 @@ const RightSidebar = () => {
             setShowContextMenu(true);
           }}
         >
-          <div className="w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500">
+          <div className="relative w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500">
             <h1>{selectedItem?.chatName}</h1>
-            <Button>
+            <Button
+              className="cursor-pointer"
+              onClick={() => setIsProfileModalOpen(true)}
+            >
               <FaUser />{" "}
             </Button>
             <div className="">icons</div>
             <div className="">
-              <IoClose className="cursor-pointer" onClick={()=>{
-                setSelectedItem(null)
-              }}  size={24}/>
+              <IoClose
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedItem(null);
+                }}
+                size={24}
+              />
             </div>
+
+            {isProfileModalOpen && selectedItem && (
+              <div className="fixed inset-0 flex items-center justify-center backdrop:brightness-50 z-50">
+              <Suspense fallback={<div>loading...</div>}>
+                  <ProfileModal
+                  chat={selectedItem}
+                  onCancel={() => setIsProfileModalOpen(false)}
+                />
+              </Suspense>
+              </div>
+            )}
           </div>
           <div className="flex flex-col bg-slate-300 min-h-[calc(100vh-64px)]">
             <div className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2">
-              {authenticate.isSuccess &&
-                messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`p-2 rounded-md max-w-[70%] ${
-                      authenticate?.data?.data?._id === msg.sender
-                        ? "bg-green-500 ml-auto"
-                        : "bg-white"
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
-                ))}
+              {Array.isArray(messages) &&
+                messages.map((msg, index) => {
+                  const isSender =
+                    msg.sender === currentUserId ||
+                    msg.sender === currentUserId;
+
+                  return (
+                    <div
+                      key={index}
+                      className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${
+                        isSender
+                          ? "ml-auto bg-green-500 text-white"
+                          : "mr-auto bg-white text-black"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  );
+                })}
               <div ref={messagesEndRef} />
             </div>
 
@@ -334,8 +361,8 @@ const RightSidebar = () => {
                 <div className="flex-1 w-full text-white">
                   <Input
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="text-lg"
+                    onChange={(e) => typingHandler(e)}
+                    className="text-lg font-semibold placeholder:text-gray-300 "
                     placeholder="Message"
                   />
                 </div>

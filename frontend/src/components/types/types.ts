@@ -35,22 +35,34 @@ export interface Message {
   content: string;
   chat: string;
 }
+export interface Messages {
+  sender: string;
+  content: string;
+  chat: string;
+}
 export interface AuthState {
   message: string;
   user?: User;
   chat: Chat;
 }
+export interface UserChats {
+  chats: string[];
+}
 export interface Chat {
   _id: string;
   chatName: string;
-  users: User;
+  users: User[];
   isGroupChat: boolean;
   latestMessage: string;
-  groupAdmin: string;
+  groupAdmin: User;
+}
+export interface AddIntoGroupChat {
+  userId: string;
+  chatId: string;
 }
 export interface GroupChat {
   chatName: string;
-  users: string;
+  users: string[];
 }
 
 export interface RenameChat {

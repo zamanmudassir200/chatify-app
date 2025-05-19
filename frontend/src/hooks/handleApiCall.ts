@@ -5,10 +5,11 @@ import { useChatStore } from "@/store/useChatStore";
 import { useRouter } from "next/navigation";
 import {
   addIntoChat,
+  addIntoGroupChat,
   authenticateUser,
   createGroup,
   deleteChat,
-  fetchMessages,
+  fetchAllMessages,
   getAllChatsByUser,
   loginUser,
   logoutUser,
@@ -28,11 +29,19 @@ import {
   Chat,
   RenameChat,
   GroupChat,
+  Messages,
+  AddIntoGroupChat,
 } from "@/components/types/types"; // Ensure types are correct
 
 export const useHandleApiCall = () => {
-  const { setUser, setSearchedData, searchedData } = useChatStore();
-  const fetchChats = useChatStore((state) => state.fetchChats);
+  const {
+    setUser,
+    chats,
+    setChats,
+    setChatName,
+    setSearchedData,
+    searchedData,
+  } = useChatStore();
 
   const router = useRouter();
 
@@ -80,7 +89,7 @@ export const useHandleApiCall = () => {
     },
   });
 
-  const searchUsers = useMutation<any, Error, SearchUser>({
+  const searchUsers = useMutation<any, Error, any>({
     mutationFn: searchUser,
     onSuccess: (data) => {
       console.log("searched user", data);
@@ -104,8 +113,9 @@ export const useHandleApiCall = () => {
   const addUserIntoChats = useMutation<AuthState, Error, AddIntoChat>({
     mutationFn: addIntoChat,
     onSuccess: (data) => {
-      console.log(data);
+      console.log("addUser into chats", data);
       toast.success(data.message);
+      setChatName(data.chat.chatName);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -115,10 +125,10 @@ export const useHandleApiCall = () => {
       }
     },
   });
-  const handleSendMessage = useMutation<any, Error, Message>({
+  const handleSendMessage = useMutation<any, Error, Messages>({
     mutationFn: sendMessage,
     onSuccess: (data) => {
-      console.log("data");
+      console.log("SEND MESSAGE", data);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -134,11 +144,14 @@ export const useHandleApiCall = () => {
     retry: false,
   });
 
-  // const handleFetchMessages = useQuery({
-  //   queryKey: ["messages"],
-  //   queryFn: fetchMessages,
-  //   retry: false,
-  // });
+  const handleFetchMessages = (chatId: string | null) =>
+    useQuery<Messages>({
+      queryKey: ["messages", chatId],
+      queryFn: () => fetchAllMessages(chatId),
+      enabled: !!chatId, // only fetch when chatId is truthy
+      retry: false,
+    });
+
   const handleDeleteChat = useMutation<AuthState, Error, any>({
     mutationFn: deleteChat,
     onSuccess: (data) => {
@@ -167,7 +180,7 @@ export const useHandleApiCall = () => {
       // chats ko update karo
       const { chats, setChats } = useChatStore.getState();
 
-      const updatedChats = chats.map((chat) =>
+      const updatedChats = chats.map((chat: any) =>
         chat._id === chatId ? { ...chat, name: chatName } : chat
       );
       setChats(updatedChats);
@@ -188,6 +201,7 @@ export const useHandleApiCall = () => {
     onSuccess: (data) => {
       console.log("create group", data);
       toast.success(data.message);
+      setChats([...chats, data.createdGroupChat]);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -197,8 +211,24 @@ export const useHandleApiCall = () => {
       }
     },
   });
+
+  const handleAddToGroupChat = useMutation<any, Error, AddIntoGroupChat>({
+    mutationFn: addIntoGroupChat,
+    onSuccess: (data) => {
+      console.log("add into group chat", data);
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
   return {
-    // handleFetchMessages,
+    handleAddToGroupChat,
+    handleFetchMessages,
     handleCreateGroupChat,
     handleRenameChat,
     handleSearchedChats,

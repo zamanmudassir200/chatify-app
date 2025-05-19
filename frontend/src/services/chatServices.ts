@@ -9,6 +9,8 @@ import {
   Message,
   RenameChat,
   GroupChat,
+  Messages,
+  AddIntoGroupChat,
 } from "@/components/types/types";
 
 export const registerUser = async (formData: RegisterForm) => {
@@ -37,10 +39,12 @@ export const logoutUser = async (): Promise<any> => {
 export const searchUser = async (
   searchData: SearchUser
 ): Promise<AuthState> => {
-  const response = await axios.get(`${url}/user/searchUser`, {
-    params: searchData, // send the search term as either name or email
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${url}/user/searchUser?search=${searchData}`,
+    {
+      withCredentials: true,
+    }
+  );
 
   return response.data;
 };
@@ -56,7 +60,7 @@ export const getAllChatsByUser = async () => {
   const response = await axios.get(`${url}/chats/fetchChats`, {
     withCredentials: true,
   });
-  return response.data;
+  return response.data.chats || [];
 };
 
 export const addIntoChat = async (userId: AddIntoChat): Promise<AuthState> => {
@@ -69,8 +73,19 @@ export const addIntoChat = async (userId: AddIntoChat): Promise<AuthState> => {
   );
   return response.data;
 };
-
-export const sendMessage = async (data: Message): Promise<any> => {
+export const addIntoGroupChat = async (
+  data: AddIntoGroupChat
+): Promise<any> => {
+  const response = await axios.put(
+    `${url}/chats/addToGroup/${data.chatId}`,
+    { userId: data.userId },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+export const sendMessage = async (data: Messages): Promise<any> => {
   const response = await axios.post(
     `${url}/messages/sendMessage/${data.chat}`,
 
@@ -83,7 +98,7 @@ export const sendMessage = async (data: Message): Promise<any> => {
   return response.data;
 };
 
-export const fetchMessages = async (chatId: string) => {
+export const fetchAllMessages = async (chatId: string | null) => {
   const response = await axios.get(`${url}/messages/${chatId}`, {
     withCredentials: true,
   });
