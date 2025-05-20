@@ -31,6 +31,7 @@ router.put('/renameGroup/:chatId', authenticate, chatController.renameGroup)
 // Add user to a group chat
 router.put('/addToGroup/:chatId', authenticate, chatController.addToGroup)
 
+router.get('/searchUser/AddIntoGroup/:chatId', authenticate, chatController.searchUserToAddIntoGroup)
 // Remove user from a group chat
 router.put('/removeFromGroup/:chatId', authenticate, chatController.removeFromGroup)
 

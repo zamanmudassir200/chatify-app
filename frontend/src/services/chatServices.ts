@@ -146,3 +146,10 @@ export const createGroup = async (data: GroupChat) => {
   );
   return response.data;
 };
+
+export const getAllUsers = async () => {
+  const response = await axios.get(`${url}/user/getAllUsers`, {
+    withCredentials: true,
+  });
+  return response.data;
+};

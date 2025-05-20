@@ -11,6 +11,7 @@ import {
   deleteChat,
   fetchAllMessages,
   getAllChatsByUser,
+  getAllUsers,
   loginUser,
   logoutUser,
   registerUser,
@@ -226,7 +227,14 @@ export const useHandleApiCall = () => {
       }
     },
   });
+
+  const handleFetchAllUsers = () =>
+    useQuery({
+      queryKey: ["users"],
+      queryFn: getAllUsers,
+    });
   return {
+    handleFetchAllUsers,
     handleAddToGroupChat,
     handleFetchMessages,
     handleCreateGroupChat,

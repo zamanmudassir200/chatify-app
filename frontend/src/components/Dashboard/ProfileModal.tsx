@@ -1,4 +1,4 @@
-import React, { Suspense,lazy, useState } from "react";
+import React, { Suspense, lazy, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Chat, User } from "../types/types";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { HiUserAdd } from "react-icons/hi";
 import { IoSearch } from "react-icons/io5";
 import { useHandleApiCall } from "@/hooks/handleApiCall";
-const AddUserIntoGroupModal = lazy(()=>import('./AddUserIntoGroupModal'))
+const AddUserIntoGroupModal = lazy(() => import("./AddUserIntoGroupModal"));
 interface ProfileModalProps {
   chat: Chat;
   onCancel: () => void;
@@ -14,12 +14,13 @@ interface ProfileModalProps {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ chat, onCancel }) => {
   const { handleAddToGroupChat } = useHandleApiCall();
-
+  const [selectedChat, setSelectedChat] = useState(null);
   // const handleAddUserIntoGroupChat  = ()=>{
   //   handleAddToGroupChat.mutate({})
   // }
   console.log("chat profile modal", chat);
-  const [isAddUserIntoGroupModalOpen,setIsAddUserIntoGroupModalOpen] = useState(false)
+  const [isAddUserIntoGroupModalOpen, setIsAddUserIntoGroupModalOpen] =
+    useState(false);
   return (
     <div className="bg-white max-w-2xl p-3 mx-2 backdrop:backdrop-brightness-50 text-black  rounded-lg shadow-md w-full ">
       <div className="flex items-center justify-between border-b pb-2">
@@ -57,9 +58,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ chat, onCancel }) => {
               </div>
 
               <ul className="overflow-hidden rounded-lg border-[1px] ">
-                <div  onClick={()=>setIsAddUserIntoGroupModalOpen(true)} className="flex py-3 cursor-pointer hover:bg-gray-100 items-center gap-2">
+                <div
+                  onClick={() => {
+                    setIsAddUserIntoGroupModalOpen(true);
+                    setSelectedChat(chat);
+                  }}
+                  className="flex py-3 cursor-pointer hover:bg-gray-100 items-center gap-2"
+                >
                   <HiUserAdd
-                 
                     className="ml-4 bg-green-500 rounded-2xl text-white p-2 "
                     size={35}
                   />
@@ -94,11 +100,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ chat, onCancel }) => {
           )}
         </div>
       </div>
-      {isAddUserIntoGroupModalOpen &&
-      <Suspense fallback={<div>loading...</div>}>
-         <AddUserIntoGroupModal/>
-      </Suspense>
-      }
+      {isAddUserIntoGroupModalOpen && (
+        <div className="fixed inset-0 backdrop:backdrop-brightness-50 flex items-center justify-center z-[100] bg-white max-w-2xl w-full rounded-lg m-auto h-[500px] shadow-2xl">
+          <Suspense fallback={<div>loading...</div>}>
+            <AddUserIntoGroupModal
+              chatItem={selectedChat}
+              onCancel={() => setIsAddUserIntoGroupModalOpen(false)}
+            />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 };

@@ -857,7 +857,15 @@ export default {
             return
         }
     }),
-
+    searchUserToAddIntoGroup: asyncHandler(async (request: Request, _response: Response, next: NextFunction) => {
+        try {
+            const keyword = request.query.search
+            console.log(keyword)
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
     removeFromGroup: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
             const req = request as IAuthenticateRequest2
