@@ -7,6 +7,8 @@ import messageModel from '../models/messageModel'
 import { IUserWithId } from '../../user/_shared/types/users.interface'
 
 import chatModel from '../../chat/models/chatModel'
+import userModel from '../../user/_shared/models/user.model'
+
 interface IAuthenticateRequest2 extends Request {
     authenticatedUser: IUserWithId
 }
@@ -39,13 +41,31 @@ export default {
                 return
             }
 
+            const otherUser = existingChat?.users?.filter((u) => {
+                return u.toString() !== user._id.toString()
+            })
+
+            console.log('otherUser', otherUser[0])
+
+            const isChatExistInOtherUser = await userModel.find({ _id: otherUser[0], chats: existingChat._id })
+
+            console.log('isChatExistInOtherUser', isChatExistInOtherUser)
+
+            if (isChatExistInOtherUser.length === 0) {
+                const addExistingChatIntoOtherUser = await userModel.findByIdAndUpdate(
+                    { _id: otherUser[0] },
+                    { $addToSet: { chats: existingChat._id } },
+                    { new: true }
+                )
+                console.log('addExistingChatIntoOtherUser', addExistingChatIntoOtherUser)
+            }
             // Create the message
             let newMessage = await messageModel.create({
                 sender: user?._id,
                 content,
                 chat: existingChat._id
             })
-
+            // await userModel.findByIdAndUpdate()
             // Update latestMessage in chat
             existingChat.latestMessage = newMessage._id as Types.ObjectId
             await existingChat.save()
@@ -94,6 +114,31 @@ export default {
             })
         } catch (error) {
             httpError(next, error, req, 500)
+        }
+    }),
+    deleteMessage: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const { messageId } = request.params
+            const message = await messageModel.findByIdAndDelete(messageId)
+
+            response.json({ message })
+            return
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
+    editMessage: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const { messageId } = request.params
+            const { content } = request.body
+            const updatedMessage = await messageModel.findByIdAndUpdate({ _id: messageId }, { content: content }, { new: true })
+
+            response.json(updatedMessage)
+            return
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
         }
     })
 }

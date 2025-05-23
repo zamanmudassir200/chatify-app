@@ -6,11 +6,14 @@ import {
   SearchUser,
   AuthState,
   AddIntoChat,
-  Message,
   RenameChat,
   GroupChat,
-  Messages,
   AddIntoGroupChat,
+  RemoveFromGroupChat,
+  RenameGroupChat,
+  MessagesProps,
+  Messages,
+  EditMessage,
 } from "@/components/types/types";
 
 export const registerUser = async (formData: RegisterForm) => {
@@ -78,19 +81,26 @@ export const addIntoGroupChat = async (
 ): Promise<any> => {
   const response = await axios.put(
     `${url}/chats/addToGroup/${data.chatId}`,
+    { userIds: data.userIds },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+export const removeFromGroupChat = async (data: RemoveFromGroupChat) => {
+  const response = await axios.put(
+    `${url}/chats/removeFromGroup/${data.chatId}`,
     { userId: data.userId },
-    {
-      withCredentials: true,
-    }
+    { withCredentials: true }
   );
   return response.data;
 };
-export const sendMessage = async (data: Messages): Promise<any> => {
+export const sendMessage = async (data: MessagesProps): Promise<Messages> => {
   const response = await axios.post(
-    `${url}/messages/sendMessage/${data.chat}`,
+    `${url}/messages/sendMessage/${data.chatId}`,
 
-    data,
-
+    { content: data.content },
     {
       withCredentials: true,
     }
@@ -98,6 +108,21 @@ export const sendMessage = async (data: Messages): Promise<any> => {
   return response.data;
 };
 
+export const editMessage = async (data: EditMessage): Promise<any> => {
+  const response = await axios.put(
+    `${url}/messages/${data.messageId}`,
+    { content: data.content },
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
+export const deleteMessage = async (messageId: string): Promise<any> => {
+  const response = await axios.delete(`${url}/messages/${messageId}`, {
+    withCredentials: true,
+  });
+  return response.data;
+};
 export const fetchAllMessages = async (chatId: string | null) => {
   const response = await axios.get(`${url}/messages/${chatId}`, {
     withCredentials: true,
@@ -151,5 +176,16 @@ export const getAllUsers = async () => {
   const response = await axios.get(`${url}/user/getAllUsers`, {
     withCredentials: true,
   });
+  return response.data;
+};
+
+export const renameGroup = async (data: RenameGroupChat) => {
+  const response = await axios.put(
+    `${url}/chats/renameGroup/${data.chatId}`,
+    {
+      chatName: data.chatName,
+    },
+    { withCredentials: true }
+  );
   return response.data;
 };

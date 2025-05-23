@@ -825,26 +825,37 @@ export default {
         try {
             const req = request as IAuthenticateRequest2
             // const user = req.authenticatedUser
-            const { userId } = req.body
+            const { userIds } = req.body
             const { chatId } = req.params
             if (!chatId) {
                 response.status(400).json({ message: 'ChatID is required (params)', success: false })
                 return
             }
-            if (!userId) {
-                response.status(400).json({ message: 'All fields are required', success: false })
+            if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
+                response.status(400).json({ message: 'userIds array is required in body', success: false })
                 return
             }
+
             const added = await chatModel
                 .findByIdAndUpdate(
                     chatId,
                     {
-                        $addToSet: { users: userId }
+                        $addToSet: { users: { $each: userIds } }
                     },
                     { new: true }
                 )
                 .populate('users', '-password')
                 .populate('groupAdmin', '-password')
+
+            await userModel.updateMany(
+                { _id: userIds },
+                {
+                    $addToSet: { chats: chatId }
+                },
+                {
+                    new: true
+                }
+            )
             if (!added) {
                 response.status(404).json({ message: 'Chat not found', success: false })
                 return
@@ -890,6 +901,8 @@ export default {
                 )
                 .populate('users', '-password')
                 .populate('groupAdmin', '-password')
+
+            await userModel.findByIdAndUpdate({ _id: userId }, { $pull: { chats: chatId } }, { new: true })
             if (!removed) {
                 response.status(404).json({ message: 'Chat not found', success: false })
                 return

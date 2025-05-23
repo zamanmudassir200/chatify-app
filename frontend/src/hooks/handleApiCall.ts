@@ -9,13 +9,17 @@ import {
   authenticateUser,
   createGroup,
   deleteChat,
+  deleteMessage,
+  editMessage,
   fetchAllMessages,
   getAllChatsByUser,
   getAllUsers,
   loginUser,
   logoutUser,
   registerUser,
+  removeFromGroupChat,
   renameChat,
+  renameGroup,
   searchChats,
   searchUser,
   sendMessage,
@@ -30,8 +34,12 @@ import {
   Chat,
   RenameChat,
   GroupChat,
-  Messages,
   AddIntoGroupChat,
+  RemoveFromGroupChat,
+  RenameGroupChat,
+  MessagesProps,
+  Messages,
+  EditMessage,
 } from "@/components/types/types"; // Ensure types are correct
 
 export const useHandleApiCall = () => {
@@ -126,10 +134,10 @@ export const useHandleApiCall = () => {
       }
     },
   });
-  const handleSendMessage = useMutation<any, Error, Messages>({
+  const handleSendMessage = useMutation<any, Error, MessagesProps>({
     mutationFn: sendMessage,
     onSuccess: (data) => {
-      console.log("SEND MESSAGE", data);
+      console.log("SEND MESSAGE", data.msg);
     },
     onError: (error: unknown) => {
       if (isAxiosError(error)) {
@@ -139,6 +147,34 @@ export const useHandleApiCall = () => {
       }
     },
   });
+
+  const handleEditMessage = useMutation<any, Error, EditMessage>({
+    mutationFn: editMessage,
+    onSuccess: (data) => {
+      console.log("Edit message", data);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+  const handleDeleteMessage = useMutation<any, Error, any>({
+    mutationFn: deleteMessage,
+    onSuccess: (data) => {
+      console.log("Delete message", data);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data?.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+
   const handleGetAllChatsByUser = useQuery({
     queryKey: ["chats"],
     queryFn: getAllChatsByUser,
@@ -146,7 +182,7 @@ export const useHandleApiCall = () => {
   });
 
   const handleFetchMessages = (chatId: string | null) =>
-    useQuery<Messages>({
+    useQuery<MessagesProps>({
       queryKey: ["messages", chatId],
       queryFn: () => fetchAllMessages(chatId),
       enabled: !!chatId, // only fetch when chatId is truthy
@@ -233,7 +269,44 @@ export const useHandleApiCall = () => {
       queryKey: ["users"],
       queryFn: getAllUsers,
     });
+
+  const handleRemoveFromGroupChat = useMutation<
+    any,
+    Error,
+    RemoveFromGroupChat
+  >({
+    mutationFn: removeFromGroupChat,
+    onSuccess: (data) => {
+      console.log("removed from the group chat", data);
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+  const handleRenameGroupChat = useMutation<any, Error, RenameGroupChat>({
+    mutationFn: renameGroup,
+    onSuccess: (data) => {
+      console.log("RENAME GROUP CHAT", data);
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
   return {
+    handleDeleteMessage,
+    handleEditMessage,
+    handleRenameGroupChat,
+    handleRemoveFromGroupChat,
     handleFetchAllUsers,
     handleAddToGroupChat,
     handleFetchMessages,

@@ -1,128 +1,242 @@
-// import React, { useEffect, useRef, useState } from "react";
+// "use client";
+
+// import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 // import { Input } from "../ui/input";
+
 // import { IoIosSend } from "react-icons/io";
 // import { useHandleApiCall } from "@/hooks/handleApiCall";
 // import { useChatStore } from "@/store/useChatStore";
-// import { Message } from "../types/types";
-// import { fetchMessages } from "@/services/chatServices";
+// import { Messages } from "../types/types";
+// import { generateChatRoomId } from "@/utils/chatRoom"; // Add this import at top
+// import { IoClose } from "react-icons/io5";
+// import Image from "next/image";
+
+// const ProfileModal = lazy(() => import("./ProfileModal"));
 
 // const RightSidebar = () => {
-//   const { authenticate, handleSendMessage } = useHandleApiCall();
-//   const [messages, setMessages] = useState<Message[]>([]);
-
-//   const { selectedItem } = useChatStore();
+//   const { authenticate, handleSendMessage, handleFetchMessages } =
+//     useHandleApiCall();
 //   const [message, setMessage] = useState("");
+//   const [messages, setMessages] = useState<Messages[]>([]);
 
+//   const { selectedItem, setSelectedItem } = useChatStore();
+//   const messagesEndRef = useRef<HTMLDivElement>(null);
+//   console.log("selectedItem", selectedItem);
 //   useEffect(() => {
 //     if (authenticate.isSuccess) {
 //       console.log("Authenticated user data: ", authenticate.data);
 //     }
 //   }, [authenticate.isSuccess]);
 
-//   const handleSubmitSendMessage = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     console.log("Form Submitted ✅");
-//     console.log("messageContent:", message);
+//   const selectedChatId = selectedItem?._id;
 
-//     console.log("selectedItem:", selectedItem);
-//     console.log("Auth user ID:", authenticate?.data?.data?._id);
+//   const { data, isPending, isSuccess } = handleFetchMessages(
+//     selectedChatId ?? ""
+//   );
 
-//     if (
-//       !message.trim() ||
-//       !selectedItem?._id ||
-//       !authenticate?.data?.data?._id
-//     ) {
-//       console.log("❌ Required data missing");
-//       return;
-//     }
+//   const currentUserId = authenticate?.data?.data?._id;
+//   const targetUserId = selectedItem?.users?.find(
+//     (user: any) => user._id !== currentUserId
+//   )?._id;
 
-//     const messageData: Message = {
-//       sender: authenticate?.data?.data?._id,
-//       content: message,
-//       chat: selectedItem._id,
-//     };
+//   const chatRoomId =
+//     currentUserId && targetUserId
+//       ? generateChatRoomId(currentUserId, targetUserId)
+//       : null;
 
-//     console.log("Sending Message:", messageData);
+//   const [showContextMenu, setShowContextMenu] = useState(false);
+//   const [contextMenuPosition, setContextMenuPosition] = useState({
+//     x: 0,
+//     y: 0,
+//   });
 
-//     handleSendMessage.mutate(messageData, {
-//       onSuccess: (data) => {
-//         console.log("✅ Message sent successfully", data);
-//         setMessages((prev) => [...prev, data?.msg]); // Add new message to list
-
-//         // Emit new message via socket to other users
-//       },
-//       onError: (error) => {
-//         console.error("❌ Message send error", error);
-//       },
-//     });
-
-//     setMessage(""); // clear input
+//   useEffect(() => {
+//     const handleClickOutside = () => setShowContextMenu(false);
+//     document.addEventListener("click", handleClickOutside);
+//     return () => document.removeEventListener("click", handleClickOutside);
+//   }, []);
+//   const handleExitChat = () => {
+//     setSelectedItem(null); // this triggers your placeholder UI
+//     setShowContextMenu(false);
 //   };
-//   const messagesEndRef = useRef<HTMLDivElement>(null);
 
 //   useEffect(() => {
-//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-//   }, [messages]);
+//     console.log("data", data);
+//   }, []);
 
-//   useEffect(() => {
-//     const loadMessages = async () => {
-//       if (selectedItem?._id) {
-//         try {
-//           const msgs = await fetchMessages(selectedItem._id);
-//           console.log("msgs", msgs);
-//           setMessages(msgs);
-//         } catch (error) {
-//           console.error("Failed to load messages", error);
-//         }
+//   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+//   const handleSendMessageSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (!message.trim()) return;
+
+//     handleSendMessage.mutate(
+//       {
+//         content: message,
+//         chatId: selectedChatId ?? "",
+//         sender: currentUserId,
+//         // chatRoomId: chatRoomId,
+//       },
+//       {
+//         onSuccess: (sentMessage) => {
+//           console.log("sentMessage:", sentMessage);
+//           setMessage("");
+//           setMessages((prev) => [...prev, sentMessage.msg]);
+//           setTimeout(() => {
+//             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//           }, 100);
+//         },
 //       }
-//     };
+//     );
+//   };
+//   useEffect(() => {
+//     if (isSuccess && data) {
+//       setMessages(data); // Assuming API response structure
+//     }
+//   }, [isSuccess, data]);
 
-//     loadMessages();
-//   }, [selectedItem]);
+//   if (selectedItem === null) {
+//     return (
+//       <div
+//         className={`bg-slate-300 min-h-screen flex flex-col items-center justify-center ${
+//           selectedItem ? "block flex-1" : "hidden"
+//         }`}
+//       >
+//         {/* Header style match */}
+//         <div className="w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500"></div>
 
-//   console.log("messages", messages);
+//         {/* Main placeholder content */}
+//         <div className="flex-1 w-full flex flex-col items-center justify-center">
+//           <h2 className="text-2xl text-gray-700 font-semibold">
+//             Select a chat to start messaging
+//           </h2>
+//           <p className="text-gray-500 mt-2 text-sm">
+//             Your conversations will appear here
+//           </p>
+//         </div>
+//       </div>
+//     );
+//   }
 
 //   return (
 //     <>
-//       {authenticate?.isLoading ? (
-//         <div className="flex-1 flex items-center justify-center italic h-screen">
-//           Loading...
+//       {selectedItem === null ? (
+//         <div
+//           className={`bg-slate-300 min-h-screen flex flex-col items-center justify-center ${
+//             selectedItem ? "block flex-1" : "hidden"
+//           }`}
+//         >
+//           {/* Header style match */}
+//           <div className="w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500"></div>
+
+//           {/* Main placeholder content */}
+//           <div className="flex-1 w-full flex flex-col items-center justify-center">
+//             <h2 className="text-2xl text-gray-700 font-semibold">
+//               Select a chat to start messaging
+//             </h2>
+//             <p className="text-gray-500 mt-2 text-sm">
+//               Your conversations will appear here
+//             </p>
+//           </div>
 //         </div>
 //       ) : (
-//         <div className="flex-1">
-//           <div className="w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500">
-//             <h1>{selectedItem?.chatName}</h1>
+//         <div
+//           className="flex-1"
+//           onContextMenu={(e) => {
+//             e.preventDefault();
+//             setContextMenuPosition({ x: e.clientX, y: e.clientY });
+//             setShowContextMenu(true);
+//           }}
+//         >
+//           <div className="relative w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500">
+//             <div
+//               onClick={() => setIsProfileModalOpen(true)}
+//               className="flex cursor-pointer items-center gap-2"
+//             >
+//               <Image
+//                 width={100}
+//                 height={100}
+//                 alt={selectedItem.chatName}
+//                 src={"./next.svg"}
+//                 className="h-10 w-10 rounded-2xl"
+//               />
+//               <h1>{selectedItem?.chatName}</h1>
+//             </div>
+
 //             <div className="">icons</div>
+//             <div className="">
+//               <IoClose
+//                 className="cursor-pointer"
+//                 onClick={() => {
+//                   setSelectedItem(null);
+//                 }}
+//                 size={24}
+//               />
+//             </div>
+
+//             {isProfileModalOpen && selectedItem && (
+//               <div className="fixed inset-0 flex items-center justify-center backdrop:brightness-50 z-50">
+//                 <Suspense fallback={<div>loading...</div>}>
+//                   <ProfileModal
+//                     chat={selectedItem}
+//                     onCancel={() => setIsProfileModalOpen(false)}
+//                   />
+//                 </Suspense>
+//               </div>
+//             )}
 //           </div>
-//           <div className="flex flex-col bg-slate-300 min-h-[calc(100vh-64px)]">
+
+//           <div className="flex flex-col bg-slate-300 min-h-[calc(100vh-64px)] ">
 //             <div className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2">
-//               {authenticate.isSuccess &&
-//                 messages.map((msg, index) => (
-//                   <div
-//                     key={index}
-//                     className={`p-2 rounded-md max-w-[70%] ${
-//                       authenticate?.data?.data?._id === msg.sender
-//                         ? "bg-green-500 ml-auto"
-//                         : "bg-white"
-//                     }`}
-//                   >
-//                     {msg.content}
-//                   </div>
-//                 ))}
+//               {Array.isArray(messages) &&
+//                 messages.map((msg, index) => {
+//                   const isSender = msg?.sender?._id === currentUserId;
+
+//                   return (
+//                     <div
+//                       key={index}
+//                       className={`max-w-[70%] px-2 py-4 rounded-lg text-sm ${
+//                         isSender
+//                           ? "ml-auto bg-green-500 text-white"
+//                           : "mr-auto bg-white text-black"
+//                       }`}
+//                     >
+//                       <div className="relative flex items-center gap-2">
+//                         <div className="h-10 w-10 rounded-2xl overflow-hidden">
+//                           <img
+//                             className="w-full h-full object-cover"
+//                             src={msg.sender.profilePic}
+//                             alt=""
+//                           />
+//                         </div>
+//                         <span className="font-semibold"> {msg?.content}</span>
+//                         <p className="absolute text-xs -bottom-2 -right-1">
+//                           {new Date(msg?.createdAt).toLocaleString()}
+//                         </p>
+//                         {selectedItem.isGroupChat && (
+//                           <span className="absolute text-xs -top-4 left-0 font-semibold ">
+//                             {msg.sender.name}
+//                           </span>
+//                         )}
+//                       </div>
+//                     </div>
+//                   );
+//                 })}
 
 //               <div ref={messagesEndRef} />
 //             </div>
 
 //             <div className="bg-blue-500 h-[70px] w-full grid place-items-center">
 //               <form
-//                 onSubmit={handleSubmitSendMessage}
+//                 onSubmit={(e) => {
+//                   handleSendMessageSubmit(e);
+//                 }}
 //                 className="flex items-center w-full px-4 py-3 justify-evenly gap-2"
 //               >
 //                 <div className="flex-1 w-full text-white">
 //                   <Input
 //                     value={message}
 //                     onChange={(e) => setMessage(e.target.value)}
-//                     className="text-lg"
+//                     className="text-lg font-semibold placeholder:text-gray-300 "
 //                     placeholder="Message"
 //                   />
 //                 </div>
@@ -141,6 +255,19 @@
 //               </form>
 //             </div>
 //           </div>
+//           <div className=""></div>
+//         </div>
+//       )}
+//       {showContextMenu && (
+//         <div
+//           className="absolute z-50 bg-white shadow-lg rounded-md p-2 border text-sm"
+//           style={{ top: contextMenuPosition.y, left: contextMenuPosition.x }}
+//           onClick={handleExitChat}
+//           onMouseLeave={() => setShowContextMenu(false)}
+//         >
+//           <p className="cursor-pointer hover:bg-red-100 px-2 py-1 text-red-600">
+//             Exit Chat
+//           </p>
 //         </div>
 //       )}
 //     </>
@@ -148,31 +275,55 @@
 // };
 
 // export default RightSidebar;
-
 "use client";
 
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
-import { FaUser } from "react-icons/fa";
-
 import { IoIosSend } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
+import Image from "next/image";
+
 import { useHandleApiCall } from "@/hooks/handleApiCall";
 import { useChatStore } from "@/store/useChatStore";
-import { Chat, Message } from "../types/types";
-import { generateChatRoomId } from "@/utils/chatRoom"; // Add this import at top
-import { IoClose } from "react-icons/io5";
+import { Messages } from "../types/types";
+import { generateChatRoomId } from "@/utils/chatRoom";
+import { BsThreeDots } from "react-icons/bs";
+import { MdCopyAll, MdDeleteOutline, MdEdit } from "react-icons/md";
 
-import { Button } from "../ui/button";
-
-const ProfileModal  = lazy(()=>import('./ProfileModal'))
+const ProfileModal = lazy(() => import("./ProfileModal"));
 
 const RightSidebar = () => {
-  const { authenticate, handleSendMessage, handleFetchMessages } =
-    useHandleApiCall();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const { selectedItem, setSelectedItem } = useChatStore();
+  const {
+    authenticate,
+    handleSendMessage,
+    handleFetchMessages,
+    handleEditMessage,
+    handleDeleteMessage,
+  } = useHandleApiCall();
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Messages[]>([]);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [newMessage, setNewMessage] = useState(message);
+
+  const { selectedItem, setSelectedItem } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const selectedChatId = selectedItem?._id;
+  const { data, isSuccess } = handleFetchMessages(selectedChatId ?? "");
+
+  const currentUserId = authenticate?.data?.data?._id;
+  const targetUserId = selectedItem?.users?.find(
+    (user: any) => user._id !== currentUserId
+  )?._id;
+  const chatRoomId =
+    currentUserId && targetUserId
+      ? generateChatRoomId(currentUserId, targetUserId)
+      : null;
 
   useEffect(() => {
     if (authenticate.isSuccess) {
@@ -180,209 +331,311 @@ const RightSidebar = () => {
     }
   }, [authenticate.isSuccess]);
 
-  const handleSubmitSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (
-      !message.trim() ||
-      !selectedItem?._id ||
-      !authenticate?.data?.data?._id
-    ) {
-      console.log("❌ Required data missing");
-      return;
-    }
-
-    const messageData: Message = {
-      content: message,
-      chat: selectedItem._id,
-    };
-    setMessage("");
-
-    // Send to server via REST API
-    handleSendMessage.mutate(messageData, {
-      onSuccess: (data) => {
-        setMessages((prev) => [...prev, data?.msg]);
-
-        // // Send to others via socket
-        // const socket = getSocket();
-        // if (chatRoomId) {
-        //   socket.emit("sendMessage", { ...data?.msg, chat: chatRoomId });
-        // }
-      },
-      onError: (error) => {
-        console.error("❌ Message send error", error);
-      },
-    });
-  };
-  const selectedChatId = selectedItem?._id || null;
-
-  const { data, isPending, isSuccess } = handleFetchMessages(
-    selectedChatId ?? ""
-  );
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && data) {
       setMessages(data);
     }
   }, [isSuccess, data]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const currentUserId = authenticate?.data?.data?._id;
-  const targetUserId = selectedItem?.users?.find(
-    (user: any) => user._id !== currentUserId
-  )?._id;
-
-  const chatRoomId =
-    currentUserId && targetUserId
-      ? generateChatRoomId(currentUserId, targetUserId)
-      : null;
-
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({
-    x: 0,
-    y: 0,
-  });
 
   useEffect(() => {
     const handleClickOutside = () => setShowContextMenu(false);
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
   const handleExitChat = () => {
-    setSelectedItem(null); // this triggers your placeholder UI
+    setSelectedItem(null);
     setShowContextMenu(false);
   };
-  const typingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMessage(e.target.value);
+
+  const handleSendMessageSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim()) return;
+
+    handleSendMessage.mutate(
+      {
+        content: message,
+        chatId: selectedChatId ?? "",
+        sender: currentUserId,
+      },
+      {
+        onSuccess: (sentMessage) => {
+          setMessage("");
+          setMessages((prev) => [...prev, sentMessage.msg]);
+          setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          }, 100);
+        },
+      }
+    );
   };
+  const [options, setOptions] = useState<boolean>(false);
+  const [optionId, setOptionId] = useState<string | null>(null);
+  const [optionDotId, setOptionDotId] = useState<string | null>(null);
+  const [isEditMessage, setIsEditMessage] = useState<boolean>(false);
+  const [editMessageId, setEditMessageId] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("data", data);
-  }, []);
-
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const handleSubmitEditMessage = (e: React.FormEvent, msgId: string) => {
+    e.preventDefault();
+    handleEditMessage.mutate(
+      { messageId: msgId, content: newMessage },
+      {
+        onSuccess: (data) => {
+          setIsEditMessage(false);
+          console.log("data", data);
+          console.log("messages", messages);
+          setMessages((prev) =>
+            prev.map((msg) => {
+              return msg._id === msgId ? { ...msg, content: newMessage } : msg;
+            })
+          );
+        },
+      }
+    );
+  };
+  const handleDelete = (msgId: string) => {
+    handleDeleteMessage.mutate({ messageId: msgId });
+  };
+  if (selectedItem === null) {
+    return (
+      <div
+        className={` bg-slate-300 min-h-screen flex flex-col items-center justify-center ${
+          selectedItem === null ? "hidden sm:block flex-1" : "block "
+        }`}
+      >
+        <div className="w-full text-white flex items-center justify-center  px-5 py-3 h-16 bg-blue-500">
+          <h1 className="text-2xl ">
+            Welcome back <strong>{authenticate?.data?.data?.name} 👋</strong>
+          </h1>
+        </div>
+        <div className="flex-1 h-[calc(100vh-64px)] w-full flex flex-col items-center justify-center">
+          <h2 className="text-2xl text-gray-700 font-semibold">
+            Select a chat to start messaging
+          </h2>
+          <p className="text-gray-500 mt-2 text-sm">
+            Your conversations will appear here
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {selectedItem === null ? (
-        <div className="flex-1 bg-slate-300 min-h-screen flex flex-col items-center justify-center">
-          {/* Header style match */}
-          <div className="w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500"></div>
-
-          {/* Main placeholder content */}
-          <div className="flex-1 w-full flex flex-col items-center justify-center">
-            {/* <div className="mb-5">
-             <Image
-               src="/chat-logo.png" // Use a logo placed in your /public folder
-               alt="Chat Logo"
-               width={100}
-               height={100}
-               className="object-contain"
-             />
-           </div> */}
-            <h2 className="text-2xl text-gray-700 font-semibold">
-              Select a chat to start messaging
-            </h2>
-            <p className="text-gray-500 mt-2 text-sm">
-              Your conversations will appear here
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div
-          className="flex-1"
-          onContextMenu={(e) => {
-            e.preventDefault();
-            setContextMenuPosition({ x: e.clientX, y: e.clientY });
-            setShowContextMenu(true);
-          }}
-        >
-          <div className="relative w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500">
+      <div
+        className={`flex-1 w-full sm:w-[calc(100%-300px)] ${
+          selectedItem === null ? "hidden sm:block flex-1" : "block "
+        }`}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setContextMenuPosition({ x: e.clientX, y: e.clientY });
+          setShowContextMenu(true);
+        }}
+      >
+        <div className="relative w-full text-white flex items-center justify-between px-5 py-3 h-16 bg-blue-500 z-[100]">
+          <div
+            onClick={() => setIsProfileModalOpen(true)}
+            className="flex cursor-pointer items-center gap-2"
+          >
+            <Image
+              width={100}
+              height={100}
+              alt={selectedItem.chatName}
+              src={"./next.svg"}
+              className="h-10 w-10 rounded-2xl"
+            />
             <h1>{selectedItem?.chatName}</h1>
-            <Button
-              className="cursor-pointer"
-              onClick={() => setIsProfileModalOpen(true)}
-            >
-              <FaUser />{" "}
-            </Button>
-            <div className="">icons</div>
-            <div className="">
-              <IoClose
-                className="cursor-pointer"
-                onClick={() => {
-                  setSelectedItem(null);
-                }}
-                size={24}
-              />
-            </div>
+          </div>
 
-            {isProfileModalOpen && selectedItem && (
-              <div className="fixed inset-0 flex items-center justify-center backdrop:brightness-50 z-50">
+          <div className="">icons</div>
+          <IoClose
+            className="cursor-pointer"
+            onClick={() => setSelectedItem(null)}
+            size={24}
+          />
+
+          {isProfileModalOpen && selectedItem && (
+            <div className="fixed inset-0 flex items-center justify-center backdrop:brightness-50 z-50">
               <Suspense fallback={<div>loading...</div>}>
-                  <ProfileModal
+                <ProfileModal
                   chat={selectedItem}
                   onCancel={() => setIsProfileModalOpen(false)}
                 />
               </Suspense>
-              </div>
-            )}
-          </div>
-          <div className="flex flex-col bg-slate-300 min-h-[calc(100vh-64px)]">
-            <div className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2">
-              {Array.isArray(messages) &&
-                messages.map((msg, index) => {
-                  const isSender =
-                    msg.sender === currentUserId ||
-                    msg.sender === currentUserId;
+            </div>
+          )}
+        </div>
 
-                  return (
+        <div className="flex flex-col bg-slate-300 min-h-[calc(100vh-64px)]">
+          <div className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2">
+            {Array.isArray(messages) &&
+              messages.map((msg) => {
+                const isSender = msg?.sender?._id === currentUserId;
+                const isOptionDot = optionDotId === msg._id;
+                const isOptionSee = optionId === msg._id;
+                const isEditing = editMessageId === msg._id;
+                return (
+                  <div
+                    onMouseEnter={() => {
+                      setOptionDotId(msg._id);
+                      setOptions(false);
+                    }}
+                    onMouseLeave={() => {
+                      setOptionDotId(null);
+                      setOptions(false);
+                    }}
+                    key={msg._id}
+                    className="flex  items-center justify-center gap-2"
+                  >
+                    {selectedItem.isGroupChat && !isSender && (
+                      <div className="h-10 w-10 rounded-2xl overflow-hidden">
+                        <img
+                          className="w-full h-full object-cover"
+                          src={msg.sender.profilePic}
+                          alt=""
+                        />
+                      </div>
+                    )}
                     <div
-                      key={index}
-                      className={`max-w-[70%] px-4 py-2 rounded-lg text-sm ${
+                      className={` relative max-w-[45%] w-full px-2 py-5 rounded-lg text-sm ${
                         isSender
-                          ? "ml-auto bg-green-500 text-white"
+                          ? "ml-auto bg-green-500 "
                           : "mr-auto bg-white text-black"
                       }`}
                     >
-                      {msg.content}
+                      <div className="relative flex items-center gap-2">
+                        <span className="py-1 font-semibold">
+                          {isEditMessage && isEditing ? (
+                            <div className="flex items-center gap-2 ">
+                              <form
+                                onSubmit={(e) =>
+                                  handleSubmitEditMessage(e, msg._id)
+                                }
+                              >
+                                <Input
+                                  placeholder="Enter new message"
+                                  value={newMessage}
+                                  onChange={(e) =>
+                                    setNewMessage(e.target.value)
+                                  }
+                                />
+                              </form>
+                              <h1
+                                onClick={() => setIsEditMessage(false)}
+                                className="cursor-pointer  rounded bg-gray-200 hover:bg-red-400 flex items-center justify-center h-5 w-5 "
+                              >
+                                X
+                              </h1>
+                            </div>
+                          ) : (
+                            msg?.content
+                          )}
+                        </span>
+                        <p className="absolute text-xs -bottom-4  opacity-80 right-0">
+                          {new Date(msg?.createdAt).toLocaleString()}
+                        </p>
+                        {selectedItem.isGroupChat && !isSender && (
+                          <span className="absolute text-xs -top-4 left-0 text-gray-800 font-semibold">
+                            {msg.sender.name}
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`absolute top-5 ${
+                          isSender ? " -left-10" : "-right-10  "
+                        }`}
+                      >
+                        {isOptionDot && (
+                          <div className="">
+                            <BsThreeDots
+                              onClick={() => {
+                                setOptions(true);
+                                setOptionId(msg._id);
+                              }}
+                              size={26}
+                              className="bg-gray-200 rounded-2xl p-1 cursor-pointer "
+                            />
+                          </div>
+                        )}
+                        <div
+                          className={`z-[153] absolute    ${
+                            isSender ? "left-7 top-10" : "-right-50 top-5"
+                          }`}
+                        >
+                          {isOptionSee && options && (
+                            <div className="bg-white rounded-xl w-[200px] p-2">
+                              <ul className="flex flex-col gap-2">
+                                <li
+                                  className={`hover:underline  hover:text-blue-700 cursor-pointer ${
+                                    isSender ? "" : "py-0"
+                                  }  `}
+                                >
+                                  {isSender && (
+                                    <span
+                                      onClick={() => {
+                                        setIsEditMessage(true);
+                                        setEditMessageId(msg._id);
+                                        setNewMessage(msg.content)
+                                      }}
+                                      className="flex items-center gap-1"
+                                    >
+                                      <MdEdit className="text-xl" /> Edit
+                                    </span>
+                                  )}
+                                </li>
+                                <li
+                                  onClick={() => handleDelete(msg._id)}
+                                  className=" hover:underline  hover:text-red-500 cursor-pointer flex gap-[1px] items-center "
+                                >
+                                  <MdDeleteOutline className="text-xl" />
+                                  Delete
+                                  {/* delete for everyone and delete for me */}
+                                </li>
+                                <li className="hover:underline  hover:text-blue-700 cursor-pointer flex gap-[2px]` items-center ">
+                                  <MdCopyAll className="text-lg" /> Copy
+                                </li>
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  );
-                })}
-              <div ref={messagesEndRef} />
-            </div>
+                  </div>
+                );
+              })}
+            <div ref={messagesEndRef} />
+          </div>
 
-            <div className="bg-blue-500 h-[70px] w-full grid place-items-center">
-              <form
-                onSubmit={handleSubmitSendMessage}
-                className="flex items-center w-full px-4 py-3 justify-evenly gap-2"
-              >
-                <div className="flex-1 w-full text-white">
-                  <Input
-                    value={message}
-                    onChange={(e) => typingHandler(e)}
-                    className="text-lg font-semibold placeholder:text-gray-300 "
-                    placeholder="Message"
-                  />
-                </div>
-                <div>
-                  <button type="submit" disabled={handleSendMessage.isPending}>
-                    {handleSendMessage.isPending ? (
-                      <div className="text-white">...</div>
-                    ) : (
-                      <IoIosSend
-                        className="text-white cursor-pointer"
-                        size={37}
-                      />
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
+          <div className="bg-blue-500 h-[70px] w-full grid place-items-center">
+            <form
+              onSubmit={handleSendMessageSubmit}
+              className="flex items-center w-full px-4 py-3 justify-evenly gap-2"
+            >
+              <div className="flex-1 w-full text-white">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="text-lg font-semibold placeholder:text-gray-300"
+                  placeholder="Message"
+                />
+              </div>
+              <div>
+                <button type="submit" disabled={handleSendMessage.isPending}>
+                  {handleSendMessage.isPending ? (
+                    <div className="text-white">...</div>
+                  ) : (
+                    <IoIosSend
+                      className="text-white cursor-pointer"
+                      size={37}
+                    />
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
-      )}
+      </div>
+
       {showContextMenu && (
         <div
           className="absolute z-50 bg-white shadow-lg rounded-md p-2 border text-sm"

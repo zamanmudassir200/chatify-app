@@ -1,5 +1,11 @@
 "use client";
-import React, { Suspense, useEffect, useState, lazy } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useState,
+  lazy,
+  AnyActionArg,
+} from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Search } from "lucide-react";
@@ -100,7 +106,11 @@ const LeftSidebar = () => {
 
   return (
     <>
-      <div className="relative flex-[0.25] px-3 py-1 bg-blue-500 text-white border-r-4">
+      <div
+        className={`relative px-3 py-1 bg-blue-500 text-white border-r-4 ${
+          selectedItem === null ? "flex-1 sm:flex-[0.25] md:block" : "hidden md:block"
+        }  `}
+      >
         <div className="relative my-4 flex items-center justify-between">
           <Link
             className="text-xl font-bold hover:text-blue-800 duration-150 transition-all"
@@ -206,67 +216,70 @@ const LeftSidebar = () => {
         </div>
         <hr className="my-3" />
         <div className="h-[calc(100vh-190px)] overflow-y-auto">
-          {chats && chats.length > 0 ? (
-            [...chats].reverse().map((chat: any) => {
-              const isSelected = selectedItem === chat;
-              const isOptionOpen = optionModalChatId === chat._id;
+          {Array.isArray(chats) && chats.length > 0 ? (
+            chats
+              .slice()
+              .reverse()
+              .map((chat: any) => {
+                const isSelected = selectedItem === chat;
+                const isOptionOpen = optionModalChatId === chat._id;
 
-              return (
-                <div
-                  key={chat._id}
-                  className={`relative ${
-                    isSelected ? "bg-blue-800" : ""
-                  } flex items-center justify-between gap-2 my-3 hover:bg-blue-700 rounded-xl p-2`}
-                >
+                return (
                   <div
-                    onClick={() => setSelectedItem(chat)}
-                    className="gap-2 w-full flex items-center cursor-pointer"
+                    key={chat._id}
+                    className={`relative ${
+                      isSelected ? "bg-blue-800" : ""
+                    } flex items-center justify-between gap-2 my-3 hover:bg-blue-700 rounded-xl p-2`}
                   >
-                    <Image
-                      src={"/globe.svg"}
-                      width={50}
-                      height={50}
-                      alt="avatar"
-                      loading="lazy"
-                    />
-                    <h1 className="text-sm">{chat.chatName}</h1>
-                  </div>
+                    <div
+                      onClick={() => setSelectedItem(chat)}
+                      className="gap-2 w-full flex items-center cursor-pointer"
+                    >
+                      <Image
+                        src={"/globe.svg"}
+                        width={50}
+                        height={50}
+                        alt="avatar"
+                        loading="lazy"
+                      />
+                      <h1 className="text-sm">{chat.chatName}</h1>
+                    </div>
 
-                  <div className="">
-                    <HiDotsVertical
-                      className="cursor-pointer"
-                      size={20}
-                      onClick={() =>
-                        setOptionModalChatId((prev) =>
-                          prev === chat._id ? null : chat._id
-                        )
-                      }
-                    />
+                    <div className="">
+                      <HiDotsVertical
+                        className="cursor-pointer"
+                        size={20}
+                        onClick={() =>
+                          setOptionModalChatId((prev) =>
+                            prev === chat._id ? null : chat._id
+                          )
+                        }
+                      />
 
-                    {isOptionOpen && (
-                      <div className="flex flex-col gap-2 absolute z-50 -bottom-20 right-0 bg-white shadow-md rounded-md p-2">
-                        <Button
-                          className="cursor-pointer"
-                          onClick={() => deleteChatHandler(chat._id)}
-                          variant={"destructive"}
-                        >
-                          Delete
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setSelectedChatId(chat._id);
-                            setRenameChatModal(true);
-                          }}
-                          className="cursor-pointer"
-                        >
-                          Rename
-                        </Button>
-                      </div>
-                    )}
+                      {isOptionOpen && (
+                        <div className="flex flex-col gap-2 absolute z-50 -bottom-20 right-0 bg-white shadow-md rounded-md p-2">
+                          <Button
+                            className="cursor-pointer"
+                            onClick={() => deleteChatHandler(chat._id)}
+                            variant={"destructive"}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedChatId(chat._id);
+                              setRenameChatModal(true);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            Rename
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })
           ) : (
             <h1 className="text-md font-semibold my-2 text-center">
               Click 'New Chat' to add new chats
@@ -285,7 +298,7 @@ const LeftSidebar = () => {
         {isNewChatModalOpen && (
           <Suspense
             fallback={
-              <div className="inset-0 fixed flex items-center justify-center bg-white/70 z-50">
+              <div className="inset-0 fixed flex items-center justify-center backdrop:brightness-50 bg-white/70 z-[100]">
                 <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
               </div>
             }

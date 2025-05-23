@@ -62,7 +62,7 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
   };
 
   return (
-    <div className="fixed  inset-0 flex backdrop-brightness-50 items-center justify-center min-h-screen ">
+    <div className="fixed z-50 inset-0 flex backdrop-brightness-50 items-center justify-center min-h-screen ">
       <div className="bg-white p-4  mx-2 max-w-lg w-full text-black rounded-lg ">
         <div className="flex my-3 items-center justify-between">
           <h1 className=" text-lg font-semibold">New Chat</h1>
@@ -96,7 +96,7 @@ const NewChat: React.FC<NewChatProps> = ({ setIsNewChatModalOpen }) => {
         {searchedData && searchedData.count === 0 && (
           <div className="text-center my-4">No users found</div>
         )}
-        <div className="my-4">
+        <div className="my-4 h-[300px] overflow-y-auto">
           <ul>
             {searchedData &&
               searchedData.data.length > 0 &&

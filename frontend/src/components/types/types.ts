@@ -36,9 +36,16 @@ export interface Message {
   chat: string;
 }
 export interface Messages {
+  sender: User;
+  content: string;
+  createdAt: Date;
+  chat: Chat;
+  _id: string;
+}
+export interface MessagesProps {
   sender: string;
   content: string;
-  chat: string;
+  chatId: string;
 }
 export interface AuthState {
   message: string;
@@ -57,7 +64,15 @@ export interface Chat {
   groupAdmin: User;
 }
 export interface AddIntoGroupChat {
+  userIds: string[];
+  chatId: string;
+}
+export interface RemoveFromGroupChat {
   userId: string;
+  chatId: string;
+}
+export interface RenameGroupChat {
+  chatName: string;
   chatId: string;
 }
 export interface GroupChat {
@@ -68,4 +83,9 @@ export interface GroupChat {
 export interface RenameChat {
   chatId: string;
   chatName: string;
+}
+
+export interface EditMessage {
+  messageId: string;
+  content: string;
 }

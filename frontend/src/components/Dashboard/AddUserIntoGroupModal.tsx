@@ -5,20 +5,23 @@ import { useHandleApiCall } from "@/hooks/handleApiCall";
 import { Chat, User } from "../types/types";
 import { Button } from "../ui/button";
 import { TiTick } from "react-icons/ti";
+import { toast } from "react-toastify";
 
 interface addUserIntoGroupProps {
   chatItem: Chat;
   onCancel: () => void;
+  onUpdateChat: (newUsers: User[]) => void;
 }
 
 const AddUserIntoGroupModal = ({
   onCancel,
   chatItem,
+  onUpdateChat
 }: addUserIntoGroupProps) => {
   const { handleFetchAllUsers } = useHandleApiCall();
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User[]>([]);
-
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const { data: users } = handleFetchAllUsers();
 
   useEffect(() => {
@@ -30,12 +33,29 @@ const AddUserIntoGroupModal = ({
   const handleSelectUser = (user: User) => {
     if (!selectedUser.some((u) => u._id === user._id)) {
       setSelectedUser((prev) => [...prev, user]);
+      setSelectedUserIds((prev) => [...prev, user._id]);
     }
   };
   const handleRemoveUser = (userId: string) => {
     setSelectedUser((prev) => prev.filter((u) => u._id !== userId));
   };
 
+  const { handleAddToGroupChat } = useHandleApiCall();
+  const handleAddUserIntoGroupChat = () => {
+    const ids = selectedUser.map((user) => user._id); // map selectedUser to their _id
+    handleAddToGroupChat.mutate(
+      {
+        chatId: chatItem?._id,
+        userIds: ids,
+      },
+      {
+        onSuccess: (data) => {
+          onUpdateChat(selectedUser);
+          onCancel();
+        },
+      }
+    );
+  };
   return (
     <div className="relative p-5 w-full h-full">
       <div className="flex border-b-[1px] py-1 items-center justify-between ">
@@ -52,13 +72,13 @@ const AddUserIntoGroupModal = ({
         <form action="">
           <Input type="text" placeholder="Search User" />
         </form>
-        {selectedUser.length > 0 && (
-          <div className="mt-1 select-none flex items-center gap-7 overflow-x-auto">
+        {selectedUser?.length > 0 && (
+          <div className="mt-1 select-none flex items-center gap-8 overflow-x-auto">
             {selectedUser.map((user) => (
               <div
                 onClick={() => handleRemoveUser(user._id)}
                 key={user._id}
-                className="mt-1 cursor-pointer relative flex items-center justify-center flex-col bg-green-200 p-2 rounded"
+                className="mt-1 cursor-pointer relative flex items-center justify-center flex-col  p-1 rounded"
               >
                 <div className="w-10 h-10 overflow-hidden rounded-full">
                   <img
@@ -93,12 +113,11 @@ const AddUserIntoGroupModal = ({
               }
               className={`flex justify-between items-center border p-2 rounded mb-2     ${
                 isSelected ? "bg-green-600 " : ""
-              }
-   ${
-     isAlreadyInGroup
-       ? "cursor-not-allowed select-none text-gray-500"
-       : "cursor-pointer "
-   }`}
+              }   ${
+                isAlreadyInGroup
+                  ? "cursor-not-allowed select-none text-gray-500"
+                  : "cursor-pointer "
+              }`}
             >
               <div className="flex items-center gap-3">
                 <img
@@ -121,7 +140,12 @@ const AddUserIntoGroupModal = ({
         })}
       </div>
       {selectedUser && selectedUser.length > 0 && (
-        <Button className="absolute cursor-pointer bottom-4 right-10 bg-green-600">
+        <Button
+          onClick={() => {
+            handleAddUserIntoGroupChat();
+          }}
+          className="absolute text-[50px] cursor-pointer bottom-4 right-10 hover:bg-green-500 bg-green-600"
+        >
           <TiTick size={100} />
         </Button>
       )}
