@@ -502073,3 +502073,1059 @@
         }
     }
 }
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T04:57:14.994Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T03:40:25.973Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T03:40:26.028Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T04:57:59.477Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T03:40:25.973Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T03:40:26.028Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T14:23:06.070Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T03:40:25.973Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T03:40:26.028Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:18:08.088Z",
+    "message": "Database connection established",
+    "meta": {
+        "CONNECTION_NAME": "chat-app"
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:18:08.114Z",
+    "message": "Rate limiter initiated",
+    "meta": {}
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:18:08.124Z",
+    "message": "Application started on port 3000",
+    "meta": {
+        "SERVER_URL": "http://localhost:3000"
+    }
+}
+{
+    "level": "ERROR",
+    "timestamp": "2025-05-24T22:19:37.090Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": false,
+        "statusCode": 401,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "You are not allowed to perform this task",
+        "data": null,
+        "trace": {
+            "error": "Error: You are not allowed to perform this task\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:29:25\n    at Generator.next (<anonymous>)\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:4:12)\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:10:97\n    at D:\\MERN stack\\Chat app\\backend\\src\\handlers\\async.ts:5:25\n    at Layer.handle [as handle_request] (D:\\MERN stack\\Chat app\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (D:\\MERN stack\\Chat app\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at exports.default (D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\rateLimiter.ts:11:16)"
+        }
+    }
+}
+{
+    "level": "ERROR",
+    "timestamp": "2025-05-24T22:19:37.152Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": false,
+        "statusCode": 401,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/chats/fetchChats"
+        },
+        "message": "You are not allowed to perform this task",
+        "data": null,
+        "trace": {
+            "error": "Error: You are not allowed to perform this task\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:29:25\n    at Generator.next (<anonymous>)\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:8:71\n    at new Promise (<anonymous>)\n    at __awaiter (D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:4:12)\n    at D:\\MERN stack\\Chat app\\backend\\src\\middlewares\\authenticate.ts:10:97\n    at D:\\MERN stack\\Chat app\\backend\\src\\handlers\\async.ts:5:25\n    at Layer.handle [as handle_request] (D:\\MERN stack\\Chat app\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (D:\\MERN stack\\Chat app\\backend\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at Route.dispatch (D:\\MERN stack\\Chat app\\backend\\node_modules\\express\\lib\\router\\route.js:119:3)"
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:19:37.371Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T03:40:25.973Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T03:40:26.028Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:19:40.330Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 200,
+        "request": {
+            "ip": "::1",
+            "method": "POST",
+            "url": "/v1/login"
+        },
+        "message": "Login successful",
+        "data": {
+            "success": true,
+            "user": {
+                "_id": "680a8e6d3ba5573693d2e2f3",
+                "password": "$2b$10$xYKOOtWTKzK2ChFZnHSJXuXZXS7r1iaXXN.SdBAo4soXbUHtoDK9K",
+                "lastLoginAt": "2025-05-24T22:19:40.149Z",
+                "updatedAt": "2025-05-24T22:19:40.162Z"
+            },
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODBhOGU2ZDNiYTU1NzM2OTNkMmUyZjMiLCJpYXQiOjE3NDgxMjUxODAsImV4cCI6MTc0ODIxMTU4MH0.gps3KgX2ZUkBzwyVZctY2bOFkcdozgBLDpXrNxeAcZs",
+            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODBhOGU2ZDNiYTU1NzM2OTNkMmUyZjMiLCJpYXQiOjE3NDgxMjUxODAsImV4cCI6MTc3OTY2MTE4MH0.ULuJguVz825T-1z73paHhCuvkI4dkXWFwq7jrwLNino"
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:19:49.375Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 200,
+        "request": {
+            "ip": "::1",
+            "method": "POST",
+            "url": "/v1/login"
+        },
+        "message": "Login successful",
+        "data": {
+            "success": true,
+            "user": {
+                "_id": "682bbf47e7a00d33fb95fe7c",
+                "password": "$2b$10$MAGV9/yULeSJmozJuTffZeTnE8v6AFOpsiF6NGFSBmrvwizEhrimC",
+                "lastLoginAt": "2025-05-24T22:19:49.221Z",
+                "updatedAt": "2025-05-24T22:19:49.223Z"
+            },
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODJiYmY0N2U3YTAwZDMzZmI5NWZlN2MiLCJpYXQiOjE3NDgxMjUxODksImV4cCI6MTc0ODIxMTU4OX0.1oIdLwfkv7PWxTK9Ptip194Qi_Y4yAyY4wwJ7HUzxmo",
+            "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODJiYmY0N2U3YTAwZDMzZmI5NWZlN2MiLCJpYXQiOjE3NDgxMjUxODksImV4cCI6MTc3OTY2MTE4OX0.aLVQNq0wdeW_lnXSmnyF4eEK0FEsm-Qm9hQ2xlBtE5U"
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:20:15.322Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:20:15.535Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:20:16.213Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:21:16.851Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:21:17.173Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:21:27.026Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:21:27.257Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:23:45.372Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:23:45.509Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:23:58.408Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:23:58.683Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:25:35.863Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:26:47.979Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 313 2898749"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "f8f4bb79-1214-4641-8bc4-0dc7fd7b3718",
+                "code": "783317",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "680a8e6d3ba5573693d2e2f3",
+            "name": "Muhammad Mudassir Zaman",
+            "email": "zamanmudassir200@gmail.com",
+            "chats": [
+                "68295e61c35a3d6f2b43c165",
+                "682960f7b7096d4af66cb480",
+                "6829672e4dd98450025030ae",
+                "682967314dd98450025030b7",
+                "682967454dd98450025030d4",
+                "682c069a6ed20e7eec43827c",
+                "682ebaec2b1bd9c3d636be92",
+                "682f2bc24a92e54eac92a52e",
+                "682f5ab2c4a4bbc8ba8923b7",
+                "682f5abdc4a4bbc8ba8923cc"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:40.149Z",
+            "consent": true,
+            "createdAt": "2025-04-24T19:18:05.342Z",
+            "updatedAt": "2025-05-24T22:19:40.162Z",
+            "__v": 0
+        }
+    }
+}
+{
+    "level": "INFO",
+    "timestamp": "2025-05-24T22:26:48.004Z",
+    "message": "Controller Response",
+    "meta": {
+        "success": true,
+        "statusCode": 201,
+        "request": {
+            "ip": "::1",
+            "method": "GET",
+            "url": "/v1/user/me"
+        },
+        "message": "Operation is completed",
+        "data": {
+            "phoneNumber": {
+                "isoCode": "PK",
+                "countryCode": "92",
+                "internationalNumber": "+92 315633423"
+            },
+            "accountConfimation": {
+                "status": false,
+                "token": "46cce28f-748d-4ba5-99df-db444070095b",
+                "code": "338595",
+                "timestamp": null
+            },
+            "passwordReset": {
+                "token": null,
+                "expiry": null,
+                "lastResetAt": null
+            },
+            "_id": "682bbf47e7a00d33fb95fe7c",
+            "name": "haris",
+            "email": "haris@gmail.com",
+            "chats": [
+                "682f2bc24a92e54eac92a52e",
+                "682c069a6ed20e7eec43827c"
+            ],
+            "timezone": "Asia/Karachi",
+            "profilePic": "https://w7.pngwing.com/pngs/39/283/png-transparent-user-user-people-linear-icon-user-infographic-people-monochrome-thumbnail.png",
+            "role": "user",
+            "lastLoginAt": "2025-05-24T22:19:49.221Z",
+            "consent": true,
+            "createdAt": "2025-05-19T23:31:19.280Z",
+            "updatedAt": "2025-05-24T22:19:49.223Z",
+            "__v": 0
+        }
+    }
+}

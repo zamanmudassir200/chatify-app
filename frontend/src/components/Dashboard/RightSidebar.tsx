@@ -298,7 +298,7 @@ const RightSidebar = () => {
                       </div>
                     )}
                     <div
-                      className={` relative max-w-[45%] w-full px-2 py-5 rounded-lg text-sm ${
+                      className={` relative max-w-[55%] w-full px-2 py-5 rounded-lg text-sm ${
                         isSender
                           ? "ml-auto bg-green-500 "
                           : "mr-auto bg-white text-black"
