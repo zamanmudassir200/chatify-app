@@ -11,7 +11,7 @@ import {
   deleteChat,
   deleteMessage,
   editMessage,
-  fetchAllMessages,
+  fetchAllMessagesForAChat,
   getAllChatsByUser,
   getAllUsers,
   loginUser,
@@ -181,10 +181,10 @@ export const useHandleApiCall = () => {
     retry: false,
   });
 
-  const handleFetchMessages = (chatId: string | null) =>
-    useQuery<MessagesProps>({
+  const handleFetchMessagesForAChat = (chatId: string | null) =>
+    useQuery<any>({
       queryKey: ["messages", chatId],
-      queryFn: () => fetchAllMessages(chatId),
+      queryFn: () => fetchAllMessagesForAChat(chatId),
       enabled: !!chatId, // only fetch when chatId is truthy
       retry: false,
     });
@@ -303,13 +303,13 @@ export const useHandleApiCall = () => {
     },
   });
   return {
+    handleFetchMessagesForAChat,
     handleDeleteMessage,
     handleEditMessage,
     handleRenameGroupChat,
     handleRemoveFromGroupChat,
     handleFetchAllUsers,
     handleAddToGroupChat,
-    handleFetchMessages,
     handleCreateGroupChat,
     handleRenameChat,
     handleSearchedChats,

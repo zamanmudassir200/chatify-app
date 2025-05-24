@@ -21,6 +21,16 @@ export default {
             httpError(next, error, request, 500)
         }
     }),
+    getAllMessagesForAChat: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const { chatId } = request.params
+            const messages = await messageModel.find({ chat: chatId }).populate('sender', 'name email profilePic').populate('chat')
+            response.status(200).json({ message: 'All messages', messages, success: true })
+        } catch (error) {
+            httpError(next, error, request, 500)
+            return
+        }
+    }),
     sendMessage: asyncHandler(async (request: Request, response: Response, next: NextFunction) => {
         try {
             const req = request as IAuthenticateRequest2
@@ -132,9 +142,9 @@ export default {
         try {
             const { messageId } = request.params
             const { content } = request.body
-            const updatedMessage = await messageModel.findByIdAndUpdate({ _id: messageId }, { content: content }, { new: true })
+            const updatedMessage = await messageModel.findByIdAndUpdate({ _id: messageId }, { content: content, isEdited: true }, { new: true })
 
-            response.json(updatedMessage)
+            response.json({ message: 'Message has been edited', updatedMessage, success: true })
             return
         } catch (error) {
             httpError(next, error, request, 500)

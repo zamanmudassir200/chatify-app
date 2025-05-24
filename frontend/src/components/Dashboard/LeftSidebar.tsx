@@ -108,7 +108,9 @@ const LeftSidebar = () => {
     <>
       <div
         className={`relative px-3 py-1 bg-blue-500 text-white border-r-4 ${
-          selectedItem === null ? "flex-1 sm:flex-[0.25] md:block" : "hidden md:block"
+          selectedItem === null
+            ? "flex-1 sm:flex-[0.25] md:block"
+            : "hidden md:block"
         }  `}
       >
         <div className="relative my-4 flex items-center justify-between">
@@ -242,7 +244,20 @@ const LeftSidebar = () => {
                         alt="avatar"
                         loading="lazy"
                       />
-                      <h1 className="text-sm">{chat.chatName}</h1>
+                      <div className="">
+                        <h1 className="text-md font-bold">{chat.chatName}</h1>
+                        <p className="text-sm">
+                          {chat?.isGroupChat ? (
+                            <span className="">
+                              {chat?.latestMessage?.content?.slice(0, 29)}...
+                            </span>
+                          ) : (
+                            <span>
+                              {chat?.latestMessage?.content?.slice(0, 10)}
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="">

@@ -123,7 +123,7 @@ export const deleteMessage = async (messageId: string): Promise<any> => {
   });
   return response.data;
 };
-export const fetchAllMessages = async (chatId: string | null) => {
+export const fetchAllMessagesForAChat = async (chatId: string | null) => {
   const response = await axios.get(`${url}/messages/${chatId}`, {
     withCredentials: true,
   });

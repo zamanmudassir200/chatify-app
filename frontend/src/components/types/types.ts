@@ -41,6 +41,7 @@ export interface Messages {
   createdAt: Date;
   chat: Chat;
   _id: string;
+  isEdited: boolean;
 }
 export interface MessagesProps {
   sender: string;

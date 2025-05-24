@@ -4,6 +4,7 @@ export interface IMessage extends Document {
     sender: Types.ObjectId
     content: string
     chat: Types.ObjectId
+    isEdited: boolean
 }
 
 const messageSchema = new Schema<IMessage>(
@@ -19,6 +20,10 @@ const messageSchema = new Schema<IMessage>(
         chat: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'chat'
+        },
+        isEdited: {
+            type: Boolean,
+            default: false
         }
     },
     {
