@@ -18,6 +18,12 @@ interface ChatState {
 
   chatName: string;
   setChatName: (data: string) => void;
+  isTyping: boolean;
+  setIsTyping: (data: boolean) => void;
+  typing: boolean;
+  setTyping: (data: boolean) => void;
+  typingChatId: null | string;
+  setTypingChatId: (data: null | string) => void;
   fetchChats: () => void;
 }
 
@@ -36,6 +42,15 @@ export const useChatStore = create<ChatState>((set) => ({
 
   chatName: "",
   setChatName: (data) => set({ chatName: data }),
+
+  isTyping: false,
+  setIsTyping: (data) => set({ isTyping: data }),
+  typing: false,
+  setTyping: (data) => set({ typing: data }),
+
+  typingChatId: null,
+  setTypingChatId: (id: string | null) => set({ typingChatId: id }),
+
   fetchChats: async () => {
     const response = await axios.get(`${url}/chats/fetchChats`, {
       withCredentials: true,

@@ -37,8 +37,15 @@ const LeftSidebar = () => {
     handleDeleteChat,
     handleCreateGroupChat,
   } = useHandleApiCall(); // Access mutation result
-  const { setSelectedItem, selectedItem, chatName, setChats, chats } =
-    useChatStore();
+  const {
+    setSelectedItem,
+    typing,
+    selectedItem,
+    chatName,
+    isTyping,
+    setChats,
+    chats,
+  } = useChatStore();
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [isGroupChatModalOpen, setIsGroupChatModalOpen] = useState(false);
@@ -49,7 +56,6 @@ const LeftSidebar = () => {
     // Add your logout logic here
     logout.mutate({});
     router.push("/login");
-    console.log("User logged out");
     setLogoutModalOpen(false);
   };
 
@@ -58,8 +64,6 @@ const LeftSidebar = () => {
       setChats(handleGetAllChatsByUser?.data);
     }
   }, [handleGetAllChatsByUser.isSuccess]);
-
-  console.log("chats", chats);
 
   const [optionModalChatId, setOptionModalChatId] = useState<string | null>(
     null
@@ -103,7 +107,8 @@ const LeftSidebar = () => {
   const handleCreateGroup = (chatName: string, users: string[]) => {
     handleCreateGroupChat.mutate({ chatName, users });
   };
-
+  console.log("isTyping", isTyping);
+  console.log("selectedItem", selectedItem);
   return (
     <>
       <div
@@ -248,12 +253,28 @@ const LeftSidebar = () => {
                         <h1 className="text-md font-bold">{chat.chatName}</h1>
                         <p className="text-sm">
                           {chat?.isGroupChat ? (
-                            <span className="">
-                              {chat?.latestMessage?.content?.slice(0, 29)}...
+                            <span>
+                              {chat?.latestMessage?.content?.length > 29
+                                ? `${chat?.latestMessage?.content.slice(
+                                    0,
+                                    29
+                                  )}...`
+                                : chat?.latestMessage?.content}
                             </span>
                           ) : (
                             <span>
-                              {chat?.latestMessage?.content?.slice(0, 10)}
+                              {isTyping ? (
+                                <span className="font-semibold">typing...</span>
+                              ) : (
+                                <span>
+                                  {chat?.latestMessage?.content?.length > 29
+                                    ? `${chat?.latestMessage?.content.slice(
+                                        0,
+                                        29
+                                      )}...`
+                                    : chat?.latestMessage?.content}
+                                </span>
+                              )}
                             </span>
                           )}
                         </p>

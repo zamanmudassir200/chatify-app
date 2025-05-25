@@ -55,11 +55,7 @@ export default {
                 return u.toString() !== user._id.toString()
             })
 
-            console.log('otherUser', otherUser[0])
-
             const isChatExistInOtherUser = await userModel.find({ _id: otherUser[0], chats: existingChat._id })
-
-            console.log('isChatExistInOtherUser', isChatExistInOtherUser)
 
             if (isChatExistInOtherUser.length === 0) {
                 const addExistingChatIntoOtherUser = await userModel.findByIdAndUpdate(
@@ -75,7 +71,6 @@ export default {
                 content,
                 chat: existingChat._id
             })
-            // await userModel.findByIdAndUpdate()
             // Update latestMessage in chat
             existingChat.latestMessage = newMessage._id as Types.ObjectId
             await existingChat.save()

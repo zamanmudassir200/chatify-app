@@ -41,11 +41,20 @@ io.on('connection', (socket) => {
             socket.in(user._id).emit('messageReceived', newMessageReceieved)
         })
     })
-    socket.on('typing', (room) => socket.in(room).emit('typing'))
-    socket.on('stopTyping', (room) => socket.in(room).emit('stopTyping'))
-    socket.on('disconnect', () => {
-        // logger.info('Socket disconnected', { meta: { socketId: socket.id } })
-        console.log('Socket disconnected: socketId = ', socket.id)
+    socket.on('typing', (room: string) => {
+        socket.in(room).emit('typing', room)
+    })
+    socket.on('stopTyping', (room: string) => {
+        socket.in(room).emit('stopTyping', room)
+    })
+
+    // socket.on('disconnect', () => {
+    //     // logger.info('Socket disconnected', { meta: { socketId: socket.id } })
+    //     console.log('Socket disconnected: socketId = ', socket.id)
+    // })
+    socket.off('setup', () => {
+        console.log('User disconnected')
+        // socket.leave(user._id)
     })
 })
 // const server = app.listen(config.PORT)

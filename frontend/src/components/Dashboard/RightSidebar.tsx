@@ -7,7 +7,7 @@ import { IoClose } from "react-icons/io5";
 import Image from "next/image";
 import { useHandleApiCall } from "@/hooks/handleApiCall";
 import { useChatStore } from "@/store/useChatStore";
-import { Messages } from "../types/types";
+import { Chat, Messages } from "../types/types";
 import { generateChatRoomId } from "@/utils/chatRoom";
 import { BsThreeDots } from "react-icons/bs";
 import { MdCopyAll, MdDeleteOutline, MdEdit } from "react-icons/md";
@@ -19,7 +19,7 @@ const ProfileModal = lazy(() => import("./ProfileModal"));
 
 const RightSidebar = () => {
   const endpoint = `http://localhost:3000/`;
-  let selectedChatCompare: any;
+  const selectedChatCompare = useRef<null | Chat>(null);
   let socket = useRef<any>(null);
   const {
     authenticate,
@@ -28,6 +28,22 @@ const RightSidebar = () => {
     handleEditMessage,
     handleDeleteMessage,
   } = useHandleApiCall();
+  const {
+    selectedItem,
+    setSelectedItem,
+    isTyping,
+    setIsTyping,
+    typing,
+    setTyping,
+    typingChatId,
+    setTypingChatId,
+  } = useChatStore();
+
+  useEffect(() => {
+    if (selectedItem && socket.current) {
+      socket.current.emit("join chat", selectedItem._id);
+    }
+  }, [selectedItem]);
   useEffect(() => {
     socket.current = io(endpoint);
 
@@ -38,16 +54,31 @@ const RightSidebar = () => {
     if (selectedItem && socket.current) {
       socket.current.emit("join chat", selectedItem._id);
     }
-    socket.current.on("typing", () => setIsTyping(true));
-    socket.current.on("stopTyping", () => setIsTyping(false));
+
+    socket.current.on("typing", (chatId: string) => {
+      if (selectedItem?._id === chatId) {
+        setIsTyping(true);
+      }
+    });
+
+    socket.current.on("stopTyping", (chatId: string) => {
+      if (selectedItem?._id === chatId) {
+        setIsTyping(false);
+      }
+    });
+
     socket.current.on("connected", () => setSocketConnected(true));
-  }, [authenticate?.isSuccess]);
+
+    return () => {
+    socket.current.off('typing');
+    socket.current.off('stop typing');
+  };
+  }, [authenticate?.isSuccess, selectedItem]);
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Messages[]>([]);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [typing, setTyping] = useState<boolean>(false);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
+
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [user, setUser] = useState([]);
   const [contextMenuPosition, setContextMenuPosition] = useState({
@@ -56,16 +87,11 @@ const RightSidebar = () => {
   });
   const [newMessage, setNewMessage] = useState(message);
 
-  const { selectedItem, setSelectedItem } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const selectedChatId = selectedItem?._id;
   const { data, isPending, isSuccess } = handleFetchMessagesForAChat(
     selectedChatId ?? ""
-  );
-  console.log(
-    "handleFetchMessagesForAChat",
-    handleFetchMessagesForAChat(selectedItem?._id ?? "")
   );
 
   const defaultOptions = {
@@ -89,7 +115,7 @@ const RightSidebar = () => {
     if (isSuccess && data) {
       socket.current.emit("join chat", selectedItem?._id);
       setMessages(data);
-      selectedChatCompare = selectedItem;
+      selectedChatCompare.current = selectedItem;
 
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({
@@ -100,12 +126,12 @@ const RightSidebar = () => {
     }
   }, [isSuccess, isPending, data, selectedItem]);
 
-  const [socketConneted, setSocketConnected] = useState<boolean>(false);
+  const [socketConnected, setSocketConnected] = useState<boolean>(false);
   useEffect(() => {
     socket.current.on("messageReceived", (newMessageReceived: Messages) => {
       if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageReceived.chat._id
+        !selectedChatCompare.current ||
+        selectedChatCompare.current?._id !== newMessageReceived.chat._id
       ) {
         // give notification
       }
@@ -127,7 +153,7 @@ const RightSidebar = () => {
   const handleSendMessageSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
-
+    socket.current.emit("stopTyping", selectedItem?._id);
     handleSendMessage.mutate(
       {
         content: message,
@@ -146,6 +172,7 @@ const RightSidebar = () => {
       }
     );
   };
+
   const [options, setOptions] = useState<boolean>(false);
   const [optionId, setOptionId] = useState<string | null>(null);
   const [optionDotId, setOptionDotId] = useState<string | null>(null);
@@ -173,25 +200,30 @@ const RightSidebar = () => {
   const handleDelete = (msgId: string) => {
     handleDeleteMessage.mutate({ messageId: msgId });
   };
+  const lastTypingTimeRef = useRef<number>(0);
   const typingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setMessage(e.target.value);
-    if (!socketConneted) return;
+    if (!socketConnected) return;
+
     if (!typing) {
       setTyping(true);
       socket.current.emit("typing", selectedItem?._id);
+      // socket.current.emit("user_typing", selectedItem);
     }
-    let lastTypingTime = new Date().getTime();
+
+    lastTypingTimeRef.current = new Date().getTime();
     let timerLength = 3000;
     setTimeout(() => {
       let timeNow = new Date().getTime();
-      let timeDiff = timeNow - lastTypingTime;
+      let timeDiff = timeNow - lastTypingTimeRef.current;
       if (timeDiff >= timerLength && typing) {
         socket.current.emit("stopTyping", selectedItem?._id);
         setTyping(false);
       }
     }, timerLength);
   };
+
   if (selectedItem === null) {
     return (
       <div
@@ -240,7 +272,10 @@ const RightSidebar = () => {
               src={"./next.svg"}
               className="h-10 w-10 rounded-2xl"
             />
-            <h1>{selectedItem?.chatName}</h1>
+            <div className="">
+              <h1>{selectedItem?.chatName}</h1>
+              {isTyping ? <span>typing...</span> : <span>Last seen</span>}
+            </div>{" "}
           </div>
 
           <div className="">icons</div>
@@ -269,7 +304,8 @@ const RightSidebar = () => {
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
-              Array.isArray(messages) &&
+              isSuccess &&
+              Array(messages) &&
               messages.map((msg) => {
                 const isSender = msg?.sender?._id === currentUserId;
                 const isOptionDot = optionDotId === msg._id;
@@ -305,7 +341,7 @@ const RightSidebar = () => {
                       }`}
                     >
                       <div className="relative flex items-center gap-2">
-                        <span className="py-1 font-semibold">
+                        <div className="py-1 font-semibold w-full">
                           {isEditMessage && isEditing ? (
                             <div className="flex items-center gap-2 ">
                               <form
@@ -329,9 +365,11 @@ const RightSidebar = () => {
                               </h1>
                             </div>
                           ) : (
-                            msg?.content
+                            <h1 className="break-words w-full max-w-full whitespace-pre-wrap">
+                              {msg?.content}
+                            </h1>
                           )}
-                        </span>
+                        </div>
                         <p className="absolute text-xs -bottom-4  opacity-80 right-0">
                           <span className="text-xs px-2">
                             {msg?.isEdited && "Edited"}
