@@ -1,9 +1,8 @@
 "use client";
-
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { IoIosSend } from "react-icons/io";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoNotifications } from "react-icons/io5";
 import Image from "next/image";
 import { useHandleApiCall } from "@/hooks/handleApiCall";
 import { useChatStore } from "@/store/useChatStore";
@@ -12,14 +11,16 @@ import { generateChatRoomId } from "@/utils/chatRoom";
 import { BsThreeDots } from "react-icons/bs";
 import { MdCopyAll, MdDeleteOutline, MdEdit } from "react-icons/md";
 import animationData from "../../../public/animations/typing.json";
-import io from "socket.io-client";
 import Lottie from "react-lottie";
 import { Loader2 } from "lucide-react";
+import io from "socket.io-client";
+
 const ProfileModal = lazy(() => import("./ProfileModal"));
 
 const RightSidebar = () => {
-  const endpoint = `http://localhost:3000/`;
   const selectedChatCompare = useRef<null | Chat>(null);
+  const endpoint = `http://localhost:3000/`;
+
   let socket = useRef<any>(null);
   const {
     authenticate,
@@ -35,57 +36,30 @@ const RightSidebar = () => {
     setIsTyping,
     typing,
     setTyping,
-    typingChatId,
-    setTypingChatId,
+    setTypingChat,
+    setTypingUser,
+    socketConnected,
+    setSocketConnected,
+    typingUser,
+    setTypingStatus,
+    notification,
+    setNotification,
+    onlineUsers,
+    setOnlineUsers,
   } = useChatStore();
-
-  useEffect(() => {
-    if (selectedItem && socket.current) {
-      socket.current.emit("join chat", selectedItem._id);
-    }
-  }, [selectedItem]);
-  useEffect(() => {
-    socket.current = io(endpoint);
-
-    if (authenticate?.isSuccess) {
-      socket.current.emit("setup", authenticate?.data?.data);
-      setUser(authenticate?.data?.data);
-    }
-    if (selectedItem && socket.current) {
-      socket.current.emit("join chat", selectedItem._id);
-    }
-
-    socket.current.on("typing", (chatId: string) => {
-      if (selectedItem?._id === chatId) {
-        setIsTyping(true);
-      }
-    });
-
-    socket.current.on("stopTyping", (chatId: string) => {
-      if (selectedItem?._id === chatId) {
-        setIsTyping(false);
-      }
-    });
-
-    socket.current.on("connected", () => setSocketConnected(true));
-
-    return () => {
-    socket.current.off('typing');
-    socket.current.off('stop typing');
-  };
-  }, [authenticate?.isSuccess, selectedItem]);
 
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Messages[]>([]);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const [showContextMenu, setShowContextMenu] = useState(false);
-  const [user, setUser] = useState([]);
   const [contextMenuPosition, setContextMenuPosition] = useState({
     x: 0,
     y: 0,
   });
   const [newMessage, setNewMessage] = useState(message);
+  const [user, setUser] = useState([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -93,6 +67,55 @@ const RightSidebar = () => {
   const { data, isPending, isSuccess } = handleFetchMessagesForAChat(
     selectedChatId ?? ""
   );
+
+  useEffect(() => {
+    socket.current = io(endpoint);
+
+    if (authenticate?.isSuccess) {
+      socket.current.emit("setup", authenticate?.data?.data);
+      setUser(authenticate?.data?.data);
+    }
+    // if (selectedItem && socket.current.current) {
+    //   socket.current.current.emit("join chat", selectedItem._id);
+    //   socket.current.current.emit("user_login", authenticate?.data?.data?._id);
+    //   socket.current.current.on("online_users", (data: any) => {
+    //     setOnlineUsers(data);
+    //   });
+    // }
+
+    socket.current.on("typing", (data: any) => {
+      setTypingStatus((prev) => ({
+        ...prev,
+        [data.chat._id]: { user: data.user, isTyping: true },
+      }));
+
+      if (selectedItem?._id === data?.chat?._id) {
+        setIsTyping(true);
+        setTypingChat(data?.chat);
+        setTypingUser(data?.user);
+      }
+    });
+
+    socket.current.on("stopTyping", (data: any) => {
+      setTypingStatus((prev) => ({
+        ...prev,
+        [data.chat._id]: { user: data.user, isTyping: false },
+      }));
+      if (selectedItem?._id === data?.chat?._id) {
+        setIsTyping(false);
+        setTypingChat(data?.chat);
+        setTypingUser(data?.user);
+      }
+    });
+
+    socket.current.on("connected", () => setSocketConnected(true));
+
+    return () => {
+      socket.current.off("typing");
+      socket.current.off("stop typing");
+      socket.current.off("online_users");
+    };
+  }, [authenticate?.isSuccess, selectedItem]);
 
   const defaultOptions = {
     loop: true,
@@ -126,19 +149,77 @@ const RightSidebar = () => {
     }
   }, [isSuccess, isPending, data, selectedItem]);
 
-  const [socketConnected, setSocketConnected] = useState<boolean>(false);
+  const messageContainerRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
+    const container = messageContainerRef.current;
+
+    const handleScroll = () => {
+      if (!container) return;
+
+      const isAtBottom =
+        container?.scrollHeight -
+          container?.scrollTop -
+          container?.clientHeight <
+        100;
+
+      setShowScrollButton(!isAtBottom);
+    };
+
+    if (container) {
+      container?.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
+
+  const scrollToBottom = () => {
+    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (selectedItem && socket) {
+      socket.current.emit("join chat", selectedItem._id);
+      socket.current.emit("user_login", authenticate?.data?.data?._id);
+
+      socket.current.on("online_users", (data: any) => {
+        setOnlineUsers(data);
+      });
+    }
+    return () => {
+      socket.current.off("online_users");
+    };
+  }, [selectedItem]);
+  useEffect(() => {
+    // socket.current = io(endpoint);
+
     socket.current.on("messageReceived", (newMessageReceived: Messages) => {
       if (
         !selectedChatCompare.current ||
         selectedChatCompare.current?._id !== newMessageReceived.chat._id
       ) {
         // give notification
+        if (!notification.includes(newMessageReceived)) {
+          setNotification([newMessageReceived, ...notification]);
+        }
       }
       setMessages([...messages, newMessageReceived]);
+      // setTimeout(() => {
+      //   messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
+      // }, 100);
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({
+          behavior: "auto", // or "smooth" if you prefer
+          block: "end", // only scroll if needed
+        });
+      }, 0);
     });
   });
-
+  // console.log("notification -----------", notification, messages);
   useEffect(() => {
     const handleClickOutside = () => setShowContextMenu(false);
     document.addEventListener("click", handleClickOutside);
@@ -150,10 +231,13 @@ const RightSidebar = () => {
     setShowContextMenu(false);
   };
 
-  const handleSendMessageSubmit = (e: React.FormEvent) => {
+  const handleSendMessageSubmit = (e: React.FormEvent): any => {
     e.preventDefault();
     if (!message.trim()) return;
-    socket.current.emit("stopTyping", selectedItem?._id);
+    socket.current.emit("stopTyping", {
+      chat: selectedItem,
+      user: authenticate?.data?.data,
+    });
     handleSendMessage.mutate(
       {
         content: message,
@@ -163,10 +247,10 @@ const RightSidebar = () => {
       {
         onSuccess: (sentMessage) => {
           setMessage("");
-          setMessages((prev) => [...prev, sentMessage.msg]);
-          socket.current.emit("newMessage", sentMessage.msg);
+          setMessages((prev) => [...prev, sentMessage?.msg]);
+          socket.current.emit("newMessage", sentMessage?.msg);
           setTimeout(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" });
           }, 100);
         },
       }
@@ -178,6 +262,7 @@ const RightSidebar = () => {
   const [optionDotId, setOptionDotId] = useState<string | null>(null);
   const [isEditMessage, setIsEditMessage] = useState<boolean>(false);
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
+  const [otherUserOnline, setOtherUserOnline] = useState<boolean>(false);
   const handleSubmitEditMessage = (e: React.FormEvent, msgId: string) => {
     e.preventDefault();
     handleEditMessage.mutate(
@@ -208,21 +293,35 @@ const RightSidebar = () => {
 
     if (!typing) {
       setTyping(true);
-      socket.current.emit("typing", selectedItem?._id);
-      // socket.current.emit("user_typing", selectedItem);
+      socket.current.emit("typing", {
+        chat: selectedItem,
+        user: authenticate?.data?.data,
+      });
+      // socket.current.current.emit("user_typing", selectedItem);
     }
 
     lastTypingTimeRef.current = new Date().getTime();
-    let timerLength = 3000;
+    let timerLength = 2000;
     setTimeout(() => {
       let timeNow = new Date().getTime();
       let timeDiff = timeNow - lastTypingTimeRef.current;
       if (timeDiff >= timerLength && typing) {
-        socket.current.emit("stopTyping", selectedItem?._id);
+        socket.current.emit("stopTyping", {
+          chat: selectedItem,
+          user: authenticate?.data?.data,
+        });
         setTyping(false);
       }
     }, timerLength);
   };
+  const otherUser = selectedItem?.users?.find(
+    (u: any) => u._id !== authenticate?.data?.data?._id
+  );
+  useEffect(() => {
+    const isOtherUserOnline = onlineUsers.includes(otherUser?._id);
+    setOtherUserOnline(isOtherUserOnline);
+    console.log("isOtherUserOnline", isOtherUserOnline);
+  }, [onlineUsers, otherUser?._id]);
 
   if (selectedItem === null) {
     return (
@@ -231,10 +330,10 @@ const RightSidebar = () => {
           selectedItem === null ? "hidden sm:block flex-1" : "block "
         }`}
       >
-        <div className="w-full text-white flex items-center justify-center  px-5 py-3 h-16 bg-blue-500">
-          <h1 className="text-2xl ">
-            Welcome back <strong>{authenticate?.data?.data?.name} 👋</strong>
-          </h1>
+        <div className="w-full text-white flex items-center justify-between  px-5 py-3 h-16 bg-blue-500">
+          <div className="text-2xl ">
+            Welcome back 👋 <strong>{authenticate?.data?.data?.name} </strong>
+          </div>
         </div>
         <div className="flex-1 h-[calc(100vh-64px)] w-full flex flex-col items-center justify-center">
           <h2 className="text-2xl text-gray-700 font-semibold">
@@ -247,7 +346,6 @@ const RightSidebar = () => {
       </div>
     );
   }
-
   return (
     <>
       <div
@@ -268,13 +366,22 @@ const RightSidebar = () => {
             <Image
               width={100}
               height={100}
-              alt={selectedItem.chatName}
+              alt={selectedItem?.chatName}
               src={"./next.svg"}
               className="h-10 w-10 rounded-2xl"
             />
             <div className="">
               <h1>{selectedItem?.chatName}</h1>
-              {isTyping ? <span>typing...</span> : <span>Last seen</span>}
+              {isTyping ? (
+                <span className="font-semibold">
+                  {selectedItem?.isGroupChat && `${typingUser?.name} is `}
+                  typing...
+                </span>
+              ) : selectedItem?.isGroupChat ? (
+                <span> last seen </span>
+              ) : (
+                <span>{otherUserOnline ? "online" : "Last seen"}</span>
+              )}
             </div>{" "}
           </div>
 
@@ -298,15 +405,19 @@ const RightSidebar = () => {
         </div>
 
         <div className="relative flex flex-col bg-slate-300 h-[calc(100vh-64px)]">
-          <div className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2">
+          <div
+            ref={messageContainerRef}
+            className="p-5 overflow-y-auto h-[calc(100vh-134px)] space-y-2"
+          >
             {isPending ? (
               <div className="flex items-center justify-center h-[calc(100vh-134px)]">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : (
               isSuccess &&
+              data &&
               Array(messages) &&
-              messages.map((msg) => {
+              messages.map((msg, index) => {
                 const isSender = msg?.sender?._id === currentUserId;
                 const isOptionDot = optionDotId === msg._id;
                 const isOptionSee = optionId === msg._id;
@@ -321,7 +432,7 @@ const RightSidebar = () => {
                       setOptionDotId(null);
                       setOptions(false);
                     }}
-                    key={msg._id}
+                    key={index}
                     className="flex  items-center justify-center gap-2"
                   >
                     {selectedItem.isGroupChat && !isSender && (
@@ -378,7 +489,8 @@ const RightSidebar = () => {
                         </p>
                         {selectedItem.isGroupChat && !isSender && (
                           <span
-                            className={`absolute text-xs -top-4 left-0 text-gray-800 font-semibold ${
+                            onClick={() => setIsProfileModalOpen(true)}
+                            className={`cursor-pointer hover:text-blue-400 absolute text-xs -top-4 left-0 text-gray-800 font-semibold ${
                               isSender ? "" : ""
                             }`}
                           >
@@ -410,9 +522,9 @@ const RightSidebar = () => {
                         >
                           {isOptionSee && options && (
                             <div className="bg-white rounded-xl w-[200px] p-2">
-                              <ul className="flex flex-col gap-2">
+                              <ul className="flex  flex-col gap-2">
                                 <li
-                                  className={`hover:underline  hover:text-blue-700 cursor-pointer ${
+                                  className={`select-none hover:underline  hover:text-blue-700 cursor-pointer ${
                                     isSender ? "" : "py-0"
                                   }  `}
                                 >
@@ -423,7 +535,7 @@ const RightSidebar = () => {
                                         setEditMessageId(msg._id);
                                         setNewMessage(msg.content);
                                       }}
-                                      className="flex items-center gap-1"
+                                      className="flex items-center select-none gap-1"
                                     >
                                       <MdEdit className="text-xl" /> Edit
                                     </span>
@@ -431,7 +543,7 @@ const RightSidebar = () => {
                                 </li>
                                 <li
                                   onClick={() => handleDelete(msg._id)}
-                                  className=" hover:underline  hover:text-red-500 cursor-pointer flex gap-[1px] items-center "
+                                  className=" hover:underline  hover:text-red-500 cursor-pointer flex gap-[1px] select-none items-center "
                                 >
                                   <MdDeleteOutline className="text-xl" />
                                   Delete
@@ -450,10 +562,18 @@ const RightSidebar = () => {
                 );
               })
             )}
+            {showScrollButton && (
+              <button
+                onClick={scrollToBottom}
+                className="fixed bottom-24 right-6 z-50 bg-blue-500 text-white p-2 rounded-full shadow-lg hover:bg-blue-600 transition"
+              >
+                +
+              </button>
+            )}
             <div ref={messagesEndRef} />
           </div>
           <div className="">
-            {isTyping && (
+            {isTyping && authenticate?.data?.data && (
               <div className="">
                 <Lottie
                   options={defaultOptions}

@@ -36,15 +36,18 @@ const LeftSidebar = () => {
     handleRenameChat,
     handleDeleteChat,
     handleCreateGroupChat,
+    authenticate,
   } = useHandleApiCall(); // Access mutation result
   const {
     setSelectedItem,
-    typing,
     selectedItem,
-    chatName,
     isTyping,
     setChats,
+    typingStatus,
     chats,
+    // typingUser,
+    onlineUsers,
+    typingChat,
   } = useChatStore();
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
@@ -107,8 +110,7 @@ const LeftSidebar = () => {
   const handleCreateGroup = (chatName: string, users: string[]) => {
     handleCreateGroupChat.mutate({ chatName, users });
   };
-  console.log("isTyping", isTyping);
-  console.log("selectedItem", selectedItem);
+  console.log("onlineUsers", onlineUsers);
   return (
     <>
       <div
@@ -125,6 +127,10 @@ const LeftSidebar = () => {
           >
             Chatify
           </Link>
+          <div className="sm:hidden flex-col  flex items-center gap-2 ">
+        <span>Welcome back 👋</span>
+        <span className="font-bold">{authenticate?.data?.data?.name}</span>
+          </div>
           <Button
             className="bg-white text-black hover:bg-black hover:text-white duration-200 transition-all"
             onClick={() => setIsOptionsModalOpen(true)}
@@ -202,7 +208,7 @@ const LeftSidebar = () => {
                     <li
                       onClick={() => setSelectedItem(chat)}
                       className="hover:bg-gray-100 py-2 px-2 border-b-[1px]"
-                      key={chat._id}
+                      key={chat?._id}
                     >
                       <div className="gap-2 flex items-center cursor-pointer">
                         <Image
@@ -231,16 +237,24 @@ const LeftSidebar = () => {
                 const isSelected = selectedItem === chat;
                 const isOptionOpen = optionModalChatId === chat._id;
 
+                // Find the other user (in one-to-one chats only)
+                const otherUser = chat?.users?.find(
+                  (u: any) => u._id !== authenticate?.data?.data?._id
+                );
+
+                // Is the other user online?
+                const isOtherUserOnline = onlineUsers.includes(otherUser?._id);
+
                 return (
                   <div
-                    key={chat._id}
+                    key={chat?._id}
                     className={`relative ${
                       isSelected ? "bg-blue-800" : ""
                     } flex items-center justify-between gap-2 my-3 hover:bg-blue-700 rounded-xl p-2`}
                   >
                     <div
                       onClick={() => setSelectedItem(chat)}
-                      className="gap-2 w-full flex items-center cursor-pointer"
+                      className=" gap-2 w-full flex items-center cursor-pointer"
                     >
                       <Image
                         src={"/globe.svg"}
@@ -248,22 +262,49 @@ const LeftSidebar = () => {
                         height={50}
                         alt="avatar"
                         loading="lazy"
+                        className="border-[1px] border-white rounded-full"
                       />
+
+                      {/* {onlineUsers?.includes(authenticate?.data?.data?._id) && online ? (
+                        <div
+                          className={`absolute bottom-0 left-40  h-3 w-3 border-[1px] border-white rounded-full bg-green-500   `}
+                        ></div>
+                      ) : (
+                        "null"
+                      )} */}
+                      {!chat?.isGroupChat && (
+                        <div
+                          className={`absolute bottom-2 left-11 h-3 w-3 border-[1px] border-white rounded-full ${
+                            isOtherUserOnline ? "bg-green-500" : "bg-gray-400"
+                          }`}
+                        />
+                      )}
+
+                      {!chat?.isGroupChat && isOtherUserOnline && (
+                        <div className="absolute bottom-2 left-11 h-3 w-3 border-[1px] border-white rounded-full bg-green-500" />
+                      )}
+
                       <div className="">
                         <h1 className="text-md font-bold">{chat.chatName}</h1>
-                        <p className="text-sm">
+                        {/* <div className="text-sm">
                           {chat?.isGroupChat ? (
                             <span>
-                              {chat?.latestMessage?.content?.length > 29
-                                ? `${chat?.latestMessage?.content.slice(
-                                    0,
-                                    29
-                                  )}...`
-                                : chat?.latestMessage?.content}
+                              {isTyping && typingChat._id === chat?._id ? (
+                                <span className="font-semibold">
+                                  {typingUser?.name} is typing...
+                                </span>
+                              ) : chat?.latestMessage?.content?.length > 29 ? (
+                                `${chat?.latestMessage?.content.slice(
+                                  0,
+                                  29
+                                )}...`
+                              ) : (
+                                chat?.latestMessage?.content
+                              )}
                             </span>
                           ) : (
                             <span>
-                              {isTyping ? (
+                              {isTyping && typingChat._id === chat?._id ? (
                                 <span className="font-semibold">typing...</span>
                               ) : (
                                 <span>
@@ -277,7 +318,33 @@ const LeftSidebar = () => {
                               )}
                             </span>
                           )}
-                        </p>
+                        </div> */}
+                        <div className="text-sm">
+                          {chat?.isGroupChat ? (
+                            typingStatus[chat._id]?.isTyping ? (
+                              <span className="font-semibold">
+                                {typingStatus[chat._id]?.user?.name ||
+                                  "Someone"}{" "}
+                                is typing...
+                              </span>
+                            ) : chat?.latestMessage?.content?.length > 29 ? (
+                              `${typingStatus[chat?._id]?.user?.name} ${chat?.latestMessage?.content.slice(0, 29)}...`
+                            ) : (
+                              chat?.latestMessage?.content
+                            )
+                          ) : typingStatus[chat._id]?.isTyping ? (
+                            <span className="font-semibold">typing...</span>
+                          ) : (
+                            <span>
+                              {chat?.latestMessage?.content?.length > 29
+                                ? `${chat?.latestMessage?.content.slice(
+                                    0,
+                                    29
+                                  )}...`
+                                : chat?.latestMessage?.content}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -293,7 +360,7 @@ const LeftSidebar = () => {
                       />
 
                       {isOptionOpen && (
-                        <div className="flex flex-col gap-2 absolute z-50 -bottom-20 right-0 bg-white shadow-md rounded-md p-2">
+                        <div className="flex flex-col gap-2 absolute z-50 -bottom-20 right-0 bg-white select-none shadow-md rounded-md p-2">
                           <Button
                             className="cursor-pointer"
                             onClick={() => deleteChatHandler(chat._id)}
@@ -306,7 +373,7 @@ const LeftSidebar = () => {
                               setSelectedChatId(chat._id);
                               setRenameChatModal(true);
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer select-none"
                           >
                             Rename
                           </Button>

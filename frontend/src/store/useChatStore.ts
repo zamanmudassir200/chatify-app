@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Chat } from "@/components/types/types";
+import { Chat, Messages } from "@/components/types/types";
 import axios from "axios";
 import url from "@/url/url";
 // You can define proper types instead of `any` if available
@@ -10,20 +10,38 @@ interface ChatState {
   searchedData: any; // define SearchUser[] or similar
   setSearchedData: (data: any) => void;
 
-  selectedItem: null | Chat; // instead of just []
-  setSelectedItem: (data: Chat) => void;
+  selectedItem: null | any; // instead of just []
+  setSelectedItem: (data: any) => void;
 
   chats: any;
   setChats: (data: any) => void;
 
   chatName: string;
   setChatName: (data: string) => void;
+
+  socketConnected: boolean;
+  setSocketConnected: (data: boolean) => void;
   isTyping: boolean;
   setIsTyping: (data: boolean) => void;
   typing: boolean;
   setTyping: (data: boolean) => void;
-  typingChatId: null | string;
-  setTypingChatId: (data: null | string) => void;
+  typingChat: null | any;
+  setTypingChat: (data: null | string) => void;
+  typingUser: null | any;
+  setTypingUser: (data: any) => void;
+
+  typingStatus: { [chatId: string]: { user?: any; isTyping: boolean } };
+  setTypingStatus: (
+    updater:
+      | { [chatId: string]: { user?: any; isTyping: boolean } }
+      | ((prev: { [chatId: string]: { user?: any; isTyping: boolean } }) => {
+          [chatId: string]: { user?: any; isTyping: boolean };
+        })
+  ) => void;
+  notification: Messages[];
+  setNotification: (data: Messages[]) => void;
+  onlineUsers: string[];
+  setOnlineUsers: (data: string[]) => void;
   fetchChats: () => void;
 }
 
@@ -43,14 +61,31 @@ export const useChatStore = create<ChatState>((set) => ({
   chatName: "",
   setChatName: (data) => set({ chatName: data }),
 
+  socketConnected: false,
+  setSocketConnected: (data: boolean) => set({ socketConnected: data }),
+
   isTyping: false,
   setIsTyping: (data) => set({ isTyping: data }),
   typing: false,
   setTyping: (data) => set({ typing: data }),
 
-  typingChatId: null,
-  setTypingChatId: (id: string | null) => set({ typingChatId: id }),
+  typingChat: null,
+  setTypingChat: (id: string | null) => set({ typingChat: id }),
 
+  typingUser: null,
+  setTypingUser: (data: any) => set({ typingUser: data }),
+
+  typingStatus: {},
+  setTypingStatus: (updater) =>
+    set((state) => ({
+      typingStatus:
+        typeof updater === "function" ? updater(state.typingStatus) : updater,
+    })),
+  notification: [],
+  setNotification: (data: any) => set({ notification: data }),
+
+  onlineUsers: [],
+  setOnlineUsers: (data: string[]) => set({ onlineUsers: data }),
   fetchChats: async () => {
     const response = await axios.get(`${url}/chats/fetchChats`, {
       withCredentials: true,
